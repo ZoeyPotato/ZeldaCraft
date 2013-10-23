@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="150" height="150" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="cobble" tilewidth="32" tileheight="32">
+  <image source="Tiles/cobble.png" width="32" height="32"/>
+  <tile id="0">
+   <properties>
+    <property name="collide" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="2" name="grass" tilewidth="32" tileheight="32">
+  <image source="Tiles/grass.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="3" name="diamondBlock" tilewidth="32" tileheight="32">
+  <image source="Tiles/diamondBlock.png" width="32" height="32"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="150" height="150">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3UMWrEQAAEQZ38/z87d2QOfG3NVlCJJFjYafS6rusFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCfuA9U3/kJ6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6o11taneWFeb6l3r89nq6o7PR1e6ep5i11p95yf49I7vvNfV83xqx5/Pvn75na6eyf+Kp3b139R3foJq1zs+H13p6nnqXevz2emqVt/5CeqNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXm+qNdbWp3lhXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAND4BsUZUriQXwEA
+  </data>
+ </layer>
+</map>

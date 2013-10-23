@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeldaCraft", "ZeldaCraft\ZeldaCraft\ZeldaCraft.csproj", "{242F98B0-008F-4B4B-A6F7-6A31600294D4}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "ZeldaCraftContent", "ZeldaCraft\ZeldaCraftContent\ZeldaCraftContent.contentproj", "{D697ED94-DD24-4429-8C80-335675FB1410}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{242F98B0-008F-4B4B-A6F7-6A31600294D4}.Debug|x86.ActiveCfg = Debug|x86
+		{242F98B0-008F-4B4B-A6F7-6A31600294D4}.Debug|x86.Build.0 = Debug|x86
+		{242F98B0-008F-4B4B-A6F7-6A31600294D4}.Release|x86.ActiveCfg = Release|x86
+		{242F98B0-008F-4B4B-A6F7-6A31600294D4}.Release|x86.Build.0 = Release|x86
+		{D697ED94-DD24-4429-8C80-335675FB1410}.Debug|x86.ActiveCfg = Debug|x86
+		{D697ED94-DD24-4429-8C80-335675FB1410}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
