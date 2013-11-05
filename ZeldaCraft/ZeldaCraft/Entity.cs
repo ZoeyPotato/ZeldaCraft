@@ -50,6 +50,11 @@ namespace ZeldaCraft
             // will be used for something that needs to occur for all entities
         }
 
+        public virtual void Update(GameTime gameTime, Entity Player)
+        {
+            // ...
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             EntityAnimation.Draw(spriteBatch, EntityPos, EntityDir);            
@@ -74,14 +79,16 @@ namespace ZeldaCraft
         public void ChangeSheet(Texture2D newSpriteSheet)            
         {
             ChangeSheet(newSpriteSheet, 4, 2);
-        }
+        }       
 
 
         // ----------------------------------------------------------------------------
-        // Handles collisions for entities: 
+        // Handles level collisions for entities: 
         // Makes a new rect from current EntityPos, sees if that rect is colliding. 
-        // If so set EntityPos back to the old Pos. Else update the Entity's Rect.
-        public void EntityCollision()
+        // If so set EntityPos back to the old Pos (using old rect). 
+        // Updates the Entity's Rect here, whether there is a collision or not.
+        // Assuming this method is called last for any movement checks for an entity.
+        public void EntityToLevelCollision()
         {          
             int collisionWidth = EntityWidth;
             int collisionHeight = EntityHeight;
@@ -102,8 +109,28 @@ namespace ZeldaCraft
                 EntityPos.Y = EntityRect.Y;            
             }
 
+            //Update entities rect, after going through collision
             EntityRect = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
                                        EntityWidth, EntityHeight);                                         
+        }
+
+        // ----------------------------------------------------------------------------
+        // Handles collisions for entities to entities: 
+        // Makes a new rect from current EntityPos, sees if that rect is colliding with
+        //      the other entity. If so, set EntityPos back to the old pos (using old rect) 
+        // DOES NOT update the entities rect, so it can be used by other methods.
+        public void EntityToEntityCollision(Entity entityToCheck)
+        {
+            Rectangle entityMoved = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
+                                                  EntityWidth, EntityHeight);
+
+            if (entityMoved.Intersects(entityToCheck.EntityRect) == true)
+            {
+                EntityPos.X = EntityRect.X;   //set Pos back to old Pos
+                EntityPos.Y = EntityRect.Y;  
+            }
+
+            //Do not update the entitys rect here, only in level collision            
         }
 
 

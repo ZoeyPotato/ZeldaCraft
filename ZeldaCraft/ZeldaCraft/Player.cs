@@ -26,8 +26,10 @@ namespace ZeldaCraft
         public override void Update(GameTime gameTime)
         {
             playerMovement();
+            
             if (EntityMoved == true)           
                 EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);            
+            
             base.Update(gameTime);
            
             EntityMoved = false;
@@ -50,7 +52,7 @@ namespace ZeldaCraft
             }
             
             if (EntityPos.X != EntityRect.X)   //check if x actually changed values
-                EntityCollision();
+                EntityToLevelCollision();
 
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
@@ -65,7 +67,7 @@ namespace ZeldaCraft
             }
 
             if (EntityPos.Y != EntityRect.Y)   //check if y actually changed values
-                EntityCollision();
+                EntityToLevelCollision();
         }        
 
 

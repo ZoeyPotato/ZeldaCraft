@@ -44,7 +44,7 @@ namespace ZeldaCraft
             mapView = graphics.GraphicsDevice.Viewport.Bounds;            
             
             player = new Player(new Vector2(640, 360));
-            mob = new Mob(new Vector2(1250, 1250));
+            mob = new Mob(new Vector2(2100, 2100));
 
             Camera.Initialize(player, mapView);
 
@@ -73,7 +73,7 @@ namespace ZeldaCraft
                 Exit();
 
             player.Update(gameTime);
-            mob.Update(gameTime);
+            mob.Update(gameTime, player);
 
             Camera.Update(player);                                  
 

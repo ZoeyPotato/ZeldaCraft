@@ -23,33 +23,50 @@ namespace ZeldaCraft
         }
 
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Entity player)
         {
-            /*
-            foreach (mob in mobList)
-            {
-                mob.mobMovement();
-            }
-            */
+            mobMovement(player);
 
             base.Update(gameTime);
         }
-
         
-        private void mobMovement(Entity passedEntity)
+        private void mobMovement(Entity player)
         {
-            if (distBetweenEntities(passedEntity) < 200)
+            if (distBetweenEntities(player) < 200)
             {
-                if ((int)passedEntity.EntityPos.X < (int)EntityPos.X)                
+                if ((int)player.EntityPos.X < (int)EntityPos.X)
+                {
                     EntityPos.X = EntityPos.X - EntitySpeed;
-                if ((int)passedEntity.EntityPos.X > (int)EntityPos.X)                
+                    EntityDir = "left"; EntityMoved = true;
+                }
+                if ((int)player.EntityPos.X > (int)EntityPos.X)
+                {
                     EntityPos.X = EntityPos.X + EntitySpeed;
-                                    
-                if ((int)passedEntity.EntityPos.Y < (int)EntityPos.Y)
+                    EntityDir = "right"; EntityMoved = true;
+                }
+
+                EntityToEntityCollision(player);   //check for mob to player collisions
+
+                if (EntityPos.X != EntityRect.X)   //check if x actually changed values
+                    EntityToLevelCollision();   //mobs rect will be updated here                  
+                   
+                 
+                if ((int)player.EntityPos.Y < (int)EntityPos.Y)
+                {
                     EntityPos.Y = EntityPos.Y - EntitySpeed;
-                if ((int)passedEntity.EntityPos.Y > (int)EntityPos.Y)                
-                    EntityPos.Y = EntityPos.Y + EntitySpeed;                
-            }
+                    EntityDir = "up"; EntityMoved = true;
+                }
+                if ((int)player.EntityPos.Y > (int)EntityPos.Y)
+                {
+                    EntityPos.Y = EntityPos.Y + EntitySpeed;
+                    EntityDir = "down"; EntityMoved = true;
+                }
+
+                EntityToEntityCollision(player);  //next three lines same as above, for Y
+
+                if (EntityPos.Y != EntityRect.Y)
+                    EntityToLevelCollision();                                
+            }                            
         }        
     }
 }
