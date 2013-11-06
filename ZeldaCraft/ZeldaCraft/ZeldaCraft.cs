@@ -60,8 +60,10 @@ namespace ZeldaCraft
             player.SetSpawn();
 
             Texture2D linkNormalSheet = Content.Load<Texture2D>("Sprites/link/linkNormalSheet");
-            player.ChangeSheet(linkNormalSheet);            
-            mob.ChangeSheet(linkNormalSheet);                        
+            player.ChangeSheet(linkNormalSheet);
+
+            Texture2D moblinSheet = Content.Load<Texture2D>("Sprites/mobs/moblin/moblinSheet");
+            mob.ChangeSheet(moblinSheet);                        
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
         }                

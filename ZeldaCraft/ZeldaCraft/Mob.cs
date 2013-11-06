@@ -23,23 +23,24 @@ namespace ZeldaCraft
         }
 
 
-        public override void Update(GameTime gameTime, Entity player)
+        public override void Update(GameTime gameTime, Player player)
         {
             mobMovement(player);
 
-            base.Update(gameTime);
+            base.Update(gameTime);            
         }
         
-        private void mobMovement(Entity player)
-        {
+        private void mobMovement(Player player)
+        {//problem here when colliding with a player in the x axis, sometimes the down
+            //  or up animation sticks, and the mob keeps animating, improper dir set!?
             if (distBetweenEntities(player) < 200)
             {
-                if ((int)player.EntityPos.X < (int)EntityPos.X)
+                if (player.EntityPos.X < EntityPos.X)
                 {
                     EntityPos.X = EntityPos.X - EntitySpeed;
                     EntityDir = "left"; EntityMoved = true;
                 }
-                if ((int)player.EntityPos.X > (int)EntityPos.X)
+                if (player.EntityPos.X > EntityPos.X)
                 {
                     EntityPos.X = EntityPos.X + EntitySpeed;
                     EntityDir = "right"; EntityMoved = true;
@@ -51,12 +52,12 @@ namespace ZeldaCraft
                     EntityToLevelCollision();   //mobs rect will be updated here                  
                    
                  
-                if ((int)player.EntityPos.Y < (int)EntityPos.Y)
+                if (player.EntityPos.Y < EntityPos.Y)
                 {
                     EntityPos.Y = EntityPos.Y - EntitySpeed;
                     EntityDir = "up"; EntityMoved = true;
                 }
-                if ((int)player.EntityPos.Y > (int)EntityPos.Y)
+                if (player.EntityPos.Y > EntityPos.Y)
                 {
                     EntityPos.Y = EntityPos.Y + EntitySpeed;
                     EntityDir = "down"; EntityMoved = true;

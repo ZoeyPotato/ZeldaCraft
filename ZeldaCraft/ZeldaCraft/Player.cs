@@ -25,14 +25,9 @@ namespace ZeldaCraft
 
         public override void Update(GameTime gameTime)
         {
-            playerMovement();
+            playerMovement();                        
             
-            if (EntityMoved == true)           
-                EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);            
-            
-            base.Update(gameTime);
-           
-            EntityMoved = false;
+            base.Update(gameTime);      
         }
 
         // ----------------------------------------------------------------------------

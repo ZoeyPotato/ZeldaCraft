@@ -46,13 +46,19 @@ namespace ZeldaCraft
 
 
         public virtual void Update(GameTime gameTime)
-        {            
-            // will be used for something that needs to occur for all entities
+        {
+            if (EntityMoved == true)
+                EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);
+
+            EntityMoved = false;
         }
 
-        public virtual void Update(GameTime gameTime, Entity Player)
-        {
-            // ...
+        public virtual void Update(GameTime gameTime, Player Player)
+        {            
+            if (EntityMoved == true)
+                EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);
+
+            EntityMoved = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -76,18 +82,18 @@ namespace ZeldaCraft
         // ----------------------------------------------------------------------------
         // Wrapper for passing only a texture: 
         // Defaults totalRowsInSheet to '4', defaults largestRowLength to 2. 
-        public void ChangeSheet(Texture2D newSpriteSheet)            
+        public void ChangeSheet(Texture2D newSpriteSheet)
         {
             ChangeSheet(newSpriteSheet, 4, 2);
-        }       
+        }
 
 
         // ----------------------------------------------------------------------------
         // Handles level collisions for entities: 
         // Makes a new rect from current EntityPos, sees if that rect is colliding. 
         // If so set EntityPos back to the old Pos (using old rect). 
-        // Updates the Entity's Rect here, whether there is a collision or not.
-        // Assuming this method is called last for any movement checks for an entity.
+        // Assuming this is the last check before finalizing an entities axis position
+        // Updates the entities rect here and only here
         public void EntityToLevelCollision()
         {          
             int collisionWidth = EntityWidth;
@@ -109,28 +115,26 @@ namespace ZeldaCraft
                 EntityPos.Y = EntityRect.Y;            
             }
 
-            //Update entities rect, after going through collision
             EntityRect = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
-                                       EntityWidth, EntityHeight);                                         
+                                       EntityWidth, EntityHeight); 
         }
 
         // ----------------------------------------------------------------------------
         // Handles collisions for entities to entities: 
         // Makes a new rect from current EntityPos, sees if that rect is colliding with
         //      the other entity. If so, set EntityPos back to the old pos (using old rect) 
-        // DOES NOT update the entities rect, so it can be used by other methods.
         public void EntityToEntityCollision(Entity entityToCheck)
         {
             Rectangle entityMoved = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
-                                                  EntityWidth, EntityHeight);
-
+                                                  EntityWidth, EntityHeight);        
+        
             if (entityMoved.Intersects(entityToCheck.EntityRect) == true)
             {
                 EntityPos.X = EntityRect.X;   //set Pos back to old Pos
-                EntityPos.Y = EntityRect.Y;  
-            }
+                EntityPos.Y = EntityRect.Y;
 
-            //Do not update the entitys rect here, only in level collision            
+                EntityMoved = false;
+            }              
         }
 
 
