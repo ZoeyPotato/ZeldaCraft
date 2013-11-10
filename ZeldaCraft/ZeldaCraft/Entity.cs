@@ -123,7 +123,7 @@ namespace ZeldaCraft
         // Handles collisions for entities to entities: 
         // Makes a new rect from current EntityPos, sees if that rect is colliding with
         //      the other entity. If so, set EntityPos back to the old pos (using old rect) 
-        public void EntityToEntityCollision(Entity entityToCheck)
+        public bool EntityToEntityCollision(Entity entityToCheck)
         {
             Rectangle entityMoved = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
                                                   EntityWidth, EntityHeight);        
@@ -134,7 +134,10 @@ namespace ZeldaCraft
                 EntityPos.Y = EntityRect.Y;
 
                 EntityMoved = false;
-            }              
+                return true;
+            }
+
+            return false;
         }
 
 

@@ -30,11 +30,27 @@ namespace ZeldaCraft
             base.Update(gameTime);      
         }
 
+
         // ----------------------------------------------------------------------------
         // Handles movement for player: 
         // Moves each axis seperately and checks for collision one axis at a time.
         private void playerMovement()
-        {            
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                EntityPos.Y = EntityPos.Y + EntitySpeed;
+                EntityDir = "down"; EntityMoved = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                EntityPos.Y = EntityPos.Y - EntitySpeed;
+                EntityDir = "up"; EntityMoved = true;
+            }           
+
+            if (EntityPos.Y != EntityRect.Y)   //check if y actually changed values
+                EntityToLevelCollision();
+
+
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
                 EntityPos.X = EntityPos.X - EntitySpeed;
@@ -47,22 +63,7 @@ namespace ZeldaCraft
             }
             
             if (EntityPos.X != EntityRect.X)   //check if x actually changed values
-                EntityToLevelCollision();
-
-
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                EntityPos.Y = EntityPos.Y - EntitySpeed;
-                EntityDir = "up"; EntityMoved = true;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                EntityPos.Y = EntityPos.Y + EntitySpeed;
-                EntityDir = "down"; EntityMoved = true;
-            }
-
-            if (EntityPos.Y != EntityRect.Y)   //check if y actually changed values
-                EntityToLevelCollision();
+                EntityToLevelCollision();         
         }        
 
 
