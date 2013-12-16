@@ -12,19 +12,17 @@ namespace ZeldaCraft
 {
     public class Mob : Entity
     {
-        public List<Mob> MobList { get; set; }
-
         private float meleeAttackCD;
         private float meleeAttackTimer;  
 
 
         public Mob(Vector2 initPos) : base(initPos)
         {
-            EntityHealth = 5;   // setting defaults for a mob
-            EntityDamage = 1;
-            EntitySpeed = 2;
+            Health = 5;
+            Damage = 1;
+            Speed = 2;
 
-            meleeAttackCD = 2;
+            meleeAttackCD = 1;
             meleeAttackTimer = 0;
         }
 
@@ -45,37 +43,37 @@ namespace ZeldaCraft
             //  or up animation sticks, and the mob keeps animating, improper dir set!?
             if (distBetweenEntities(player) < 200)
             {                
-                if (EntityPos.Y < player.EntityPos.Y)
+                if (Position.Y < player.Position.Y)
                 {
-                    EntityPos.Y = EntityPos.Y + EntitySpeed;
-                    EntityMoved = true;
+                    Position.Y = Position.Y + Speed;
+                    HasMoved = true;
                 }
-                if (EntityPos.Y > player.EntityPos.Y)
+                if (Position.Y > player.Position.Y)
                 {
-                    EntityPos.Y = EntityPos.Y - EntitySpeed;
-                    EntityMoved = true;
+                    Position.Y = Position.Y - Speed;
+                    HasMoved = true;
                 }
 
                 bool collideWithPlayer = EntityToEntityCollision(player);   //check for mob to player collisions
 
-                if (EntityPos.Y != EntityRect.Y)   //check if Y actually changed values
+                if (Position.Y != HitBox.Y)   //check if Y actually changed values
                     EntityToLevelCollision();   //mobs rect will be updated here  
 
 
-                if (EntityPos.X > player.EntityPos.X)
+                if (Position.X > player.Position.X)
                 {
-                    EntityPos.X = EntityPos.X - EntitySpeed;
-                    EntityMoved = true;
+                    Position.X = Position.X - Speed;
+                    HasMoved = true;
                 }
-                if (EntityPos.X < player.EntityPos.X)
+                if (Position.X < player.Position.X)
                 {
-                    EntityPos.X = EntityPos.X + EntitySpeed;
-                    EntityMoved = true;
+                    Position.X = Position.X + Speed;
+                    HasMoved = true;
                 }
 
                 collideWithPlayer = EntityToEntityCollision(player);   //next three lines same as above, for Y
 
-                if (EntityPos.X != EntityRect.X)
+                if (Position.X != HitBox.X)
                     EntityToLevelCollision();                             
 
 
@@ -88,26 +86,27 @@ namespace ZeldaCraft
 
         private void mobDirection(Player player)
         {
-            float diffInX = Math.Abs(EntityPos.X - player.EntityPos.X);
-            float diffInY = Math.Abs(EntityPos.Y - player.EntityPos.Y);
+            float diffInX = Math.Abs(Position.X - player.Position.X);
+            float diffInY = Math.Abs(Position.Y - player.Position.Y);
 
-            if (EntityPos.Y < player.EntityPos.Y && diffInY > diffInX)
-                EntityDir = "down";
-            if (EntityPos.Y > player.EntityPos.Y && diffInY > diffInX)
-                EntityDir = "up"; 
+            if (Position.Y < player.Position.Y && diffInY > diffInX)
+                Direction = "down";
+            if (Position.Y > player.Position.Y && diffInY > diffInX)
+                Direction = "up"; 
 
-            if (EntityPos.X > player.EntityPos.X && diffInX > diffInY)            
-                EntityDir = "left";
-            if (EntityPos.X < player.EntityPos.X && diffInX > diffInY)
-                EntityDir = "right";                        
+            if (Position.X > player.Position.X && diffInX > diffInY)            
+                Direction = "left";
+            if (Position.X < player.Position.X && diffInX > diffInY)
+                Direction = "right";                        
         }
 
 
         private void meleeAttack(Player player)
         {
-            player.EntityHealth = player.EntityHealth - 1;
+            meleeAttackTimer = 0;
+            player.Health = player.Health - 1;
+            
 
-            // determine which side of the player we hit, then move player back in opposite direction about 20px?
         }
     }
 }

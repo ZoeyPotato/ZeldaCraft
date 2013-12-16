@@ -6,77 +6,74 @@ using System.Linq;
 using System.Text;
 
 //***************************************************************************
-// This class serves as a base class for all 'things' in the game.
-// A 'thing' is considered an entity if it needs to have a position in the game,
-// animations, and other misc data members.
-
-// Players, mobs, items, can all be derived from entity.
+// This class serves as a base class for all 'entities' in the game.
+// From wikipedia, an 'entity' is something that exists by itself, although it 
+//      need not be of material existence.
+// So, things like a player and a mob are considered entities. 
+// This class defines attributes, characterisitics, and functionalities that all
+// entities must have.
 
 namespace ZeldaCraft
 {
     public class Entity
     {
-        public Vector2 EntityPos;               
+        public Vector2 Position;               
         
-        public int EntityWidth { get; private set; }
-        public int EntityHeight { get; private set; }
-        public Rectangle EntityRect { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public Rectangle HitBox { get; private set; }
 
-        public Animation EntityAnimation { get; private set; }
-        public String EntityDir { get; set; }
-        public bool EntityMoved { get; set; }
+        public Animation MovingAni { get; private set; }
+        public String Direction { get; set; }
+        public bool HasMoved { get; set; }
 
-        public int EntityHealth { get; set; }
-        public int EntityDamage { get; set; }
-        public float EntitySpeed { get; set; }        
+        public int Health { get; set; }
+        public int Damage { get; set; }
+        public float Speed { get; set; }        
         
-        private String entityState;
-        private bool entityAlive;        
+        private String CurState;
+        private bool IsAlive;
 
 
         public Entity(Vector2 initPos)
         {
-            EntityPos = initPos;
+            Position = initPos;
 
-            EntityDir = "down"; EntityMoved = false;
+            Direction = "down"; HasMoved = false;
             
-            entityState = "default";
-            entityAlive = true;
+            CurState = "default";
+            IsAlive = true;
         }
 
 
         public virtual void Update(GameTime gameTime)
         {
-            if (EntityMoved == true)
-                EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);
+            if (HasMoved == true)
+                MovingAni.EntityMovementUpdate(Speed, Direction);
 
-            EntityMoved = false;
+            HasMoved = false;
         }
 
         public virtual void Update(GameTime gameTime, Player Player)
-        {            
-            if (EntityMoved == true)
-                EntityAnimation.EntityMovementUpdate(EntitySpeed, EntityDir);
-
-            EntityMoved = false;
+        {
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            EntityAnimation.Draw(spriteBatch, EntityPos, EntityDir);            
+            MovingAni.Draw(spriteBatch, Position, Direction);            
         }
 
 
         public void ChangeSheet(Texture2D newSpriteSheet, int totalRowsInSheet, int largestRowLength)
         {
-            EntityAnimation = new Animation(newSpriteSheet, totalRowsInSheet, largestRowLength);
-            EntityAnimation.AddDefaultEntityAnimations();
+            MovingAni = new Animation(newSpriteSheet, totalRowsInSheet, largestRowLength);
+            MovingAni.AddDefaultEntityAnimations();
 
-            EntityWidth = newSpriteSheet.Width / largestRowLength;
-            EntityHeight = newSpriteSheet.Height / totalRowsInSheet;
+            Width = newSpriteSheet.Width / largestRowLength;
+            Height = newSpriteSheet.Height / totalRowsInSheet;
 
-            EntityRect = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
-                                       EntityWidth, EntityHeight); 
+            HitBox = new Rectangle((int)Position.X, (int)Position.Y,
+                                       Width, Height); 
         }
 
         // ----------------------------------------------------------------------------
@@ -90,50 +87,50 @@ namespace ZeldaCraft
 
         // ----------------------------------------------------------------------------
         // Handles level collisions for entities: 
-        // Makes a new rect from current EntityPos, sees if that rect is colliding. 
-        // If so set EntityPos back to the old Pos (using old rect). 
+        // Makes a new rect from current Position, sees if that rect is colliding. 
+        // If so set Position back to the old Pos (using old rect). 
         // Assuming this is the last check before finalizing an entities axis position
         // Updates the entities rect here and only here
         public void EntityToLevelCollision()
         {          
-            int collisionWidth = EntityWidth;
-            int collisionHeight = EntityHeight;
+            int collisionWidth = Width;
+            int collisionHeight = Height;
 
             // if entity w or h are equal to tile size, decrement by one. This will
             // allow the entity to fit into tile gaps equal to its w or h.
-            if (EntityWidth == Level.LevelMap.TileWidth)
-                collisionWidth = EntityWidth - 1;           
-            if (EntityHeight == Level.LevelMap.TileHeight)
-                collisionHeight = EntityHeight - 1;
+            if (Width == Level.LevelMap.TileWidth)
+                collisionWidth = Width - 1;           
+            if (Height == Level.LevelMap.TileHeight)
+                collisionHeight = Height - 1;
 
-            Rectangle entityMoved = new Rectangle((int)EntityPos.X, (int)EntityPos.Y, 
+            Rectangle entityMoved = new Rectangle((int)Position.X, (int)Position.Y, 
                                                   collisionWidth, collisionHeight);
 
             if (Level.CollisionCheck(entityMoved) == true)
             {
-                EntityPos.X = EntityRect.X;   //set Pos back to old Pos
-                EntityPos.Y = EntityRect.Y;            
+                Position.X = HitBox.X;   //set Pos back to old Pos
+                Position.Y = HitBox.Y;            
             }
 
-            EntityRect = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
-                                       EntityWidth, EntityHeight); 
+            HitBox = new Rectangle((int)Position.X, (int)Position.Y,
+                                       Width, Height); 
         }
 
         // ----------------------------------------------------------------------------
         // Handles collisions for entities to entities: 
-        // Makes a new rect from current EntityPos, sees if that rect is colliding with
-        //      the other entity. If so, set EntityPos back to the old pos (using old rect) 
+        // Makes a new rect from current Position, sees if that rect is colliding with
+        //      the other entity. If so, set Position back to the old pos (using old rect) 
         public bool EntityToEntityCollision(Entity entityToCheck)
         {
-            Rectangle entityMoved = new Rectangle((int)EntityPos.X, (int)EntityPos.Y,
-                                                  EntityWidth, EntityHeight);        
+            Rectangle entityMoved = new Rectangle((int)Position.X, (int)Position.Y,
+                                                  Width, Height);        
         
-            if (entityMoved.Intersects(entityToCheck.EntityRect) == true)
+            if (entityMoved.Intersects(entityToCheck.HitBox) == true)
             {
-                EntityPos.X = EntityRect.X;   //set Pos back to old Pos
-                EntityPos.Y = EntityRect.Y;
+                Position.X = HitBox.X;   //set Pos back to old Pos
+                Position.Y = HitBox.Y;
 
-                EntityMoved = false;
+                HasMoved = false;
                 return true;
             }
 
@@ -149,8 +146,8 @@ namespace ZeldaCraft
         {
             double distance;
 
-            distance = Math.Sqrt(Math.Pow((passedEntity.EntityPos.X - EntityPos.X), 2) +
-                Math.Pow((passedEntity.EntityPos.Y - EntityPos.Y), 2));
+            distance = Math.Sqrt(Math.Pow((passedEntity.Position.X - Position.X), 2) +
+                Math.Pow((passedEntity.Position.Y - Position.Y), 2));
 
             return distance;
         }

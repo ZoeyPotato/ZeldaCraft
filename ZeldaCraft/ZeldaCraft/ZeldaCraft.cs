@@ -11,10 +11,10 @@ using FuncWorks.XNA.XTiled;
 #endregion
 
 //***************************************************************************
-// This is the game loop for the game. This is where all the magic happens.
+// This is the game loop for ZeldaCraft. This is where all the magic happens.
 
 namespace ZeldaCraft
-{    
+{
     public class ZeldaCraft : Game
     {
         private GraphicsDeviceManager graphics;
@@ -23,6 +23,7 @@ namespace ZeldaCraft
 
         private Player player;
         private Mob mob;
+        //public List<Mob> MobList { get; set; }   need a data struct of mobs
 
         private Rectangle mapView;
 
@@ -109,18 +110,21 @@ namespace ZeldaCraft
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 0),
                                    Color.White);
       
-            spriteBatch.DrawString(defaultFont, "PlayerPos: " + player.EntityPos.ToString(), 
+            spriteBatch.DrawString(defaultFont, "PlayerPos: " + player.Position.ToString(), 
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 20), 
                                    Color.White);
-            spriteBatch.DrawString(defaultFont, "PlayerRect: " + player.EntityRect.ToString(),
+            spriteBatch.DrawString(defaultFont, "PlayerRect: " + player.HitBox.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 40),
+                                   Color.White);
+            spriteBatch.DrawString(defaultFont, "PlayerHealth: " + player.Health.ToString(),
+                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 60),
                                    Color.White);
 
             spriteBatch.DrawString(defaultFont, "CamPos: " + Camera.CamPos.ToString(),
-                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 70), 
+                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 90), 
                                    Color.White);
             spriteBatch.DrawString(defaultFont, "CamRect: " + Camera.CamRect.ToString(),
-                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 90),
+                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 110),
                                    Color.White);
         }
     }

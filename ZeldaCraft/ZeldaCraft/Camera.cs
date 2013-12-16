@@ -26,8 +26,8 @@ namespace ZeldaCraft
         public static void Initialize(Player player, Rectangle mapView)
         {
             // first, set x/y to dead center of the player
-            float adjustedX = player.EntityPos.X + player.EntityWidth / 2;
-            float adjustedY = player.EntityPos.Y + player.EntityHeight / 2;
+            float adjustedX = player.Position.X + player.Width / 2;
+            float adjustedY = player.Position.Y + player.Height / 2;
             
             // then adjust x/y to the top left of the screen (relative to player)
             adjustedX = adjustedX - mapView.Width / 2;            
@@ -44,8 +44,8 @@ namespace ZeldaCraft
         public static void Update(Player player)
         {
             // move camera relative to the players movement
-            CamPos.X = player.EntityPos.X + player.EntityWidth / 2;
-            CamPos.Y = player.EntityPos.Y + player.EntityHeight / 2;
+            CamPos.X = player.Position.X + player.Width / 2;
+            CamPos.Y = player.Position.Y + player.Height / 2;
 
             // adjust camera to top left of screen (relative to player)
             CamPos.X = CamPos.X - CamRect.Width / 2;            

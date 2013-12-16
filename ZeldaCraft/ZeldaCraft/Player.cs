@@ -17,9 +17,9 @@ namespace ZeldaCraft
     {                  
         public Player(Vector2 initPos) : base(initPos)
         {                        
-            EntityHealth = 10;   // setting defaults for a player
-            EntityDamage = 1;
-            EntitySpeed = 3;                 
+            Health = 10;   // setting defaults for a player
+            Damage = 1;
+            Speed = 3;                 
         }
 
 
@@ -38,31 +38,31 @@ namespace ZeldaCraft
         {
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                EntityPos.Y = EntityPos.Y + EntitySpeed;
-                EntityDir = "down"; EntityMoved = true;
+                Position.Y = Position.Y + Speed;
+                Direction = "down"; HasMoved = true;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                EntityPos.Y = EntityPos.Y - EntitySpeed;
-                EntityDir = "up"; EntityMoved = true;
+                Position.Y = Position.Y - Speed;
+                Direction = "up"; HasMoved = true;
             }           
 
-            if (EntityPos.Y != EntityRect.Y)   //check if y actually changed values
+            if (Position.Y != HitBox.Y)   //check if y actually changed values
                 EntityToLevelCollision();
 
 
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                EntityPos.X = EntityPos.X - EntitySpeed;
-                EntityDir = "left"; EntityMoved = true;
+                Position.X = Position.X - Speed;
+                Direction = "left"; HasMoved = true;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                EntityPos.X = EntityPos.X + EntitySpeed;
-                EntityDir = "right"; EntityMoved = true;
+                Position.X = Position.X + Speed;
+                Direction = "right"; HasMoved = true;
             }
             
-            if (EntityPos.X != EntityRect.X)   //check if x actually changed values
+            if (Position.X != HitBox.X)   //check if x actually changed values
                 EntityToLevelCollision();         
         }        
 
@@ -86,13 +86,13 @@ namespace ZeldaCraft
                 // if we find a tile with property 'spawn', set player's Pos there
                 if (curMap.SourceTiles[curTileData.SourceID].Properties.ContainsKey("spawn"))
                 {
-                    EntityPos.X = curTileData.Target.X - 16;   // 'target' is set to the middle
-                    EntityPos.Y = curTileData.Target.Y - 16;   //   of the tile, not top left
+                    Position.X = curTileData.Target.X - 16;   // 'target' is set to the middle
+                    Position.Y = curTileData.Target.Y - 16;   //   of the tile, not top left
                 }
                 else
                 {
-                    EntityPos.X = curMap.Bounds.Width / 2;
-                    EntityPos.Y = curMap.Bounds.Height / 2;
+                    Position.X = curMap.Bounds.Width / 2;
+                    Position.Y = curMap.Bounds.Height / 2;
                 }
             }                
         }
