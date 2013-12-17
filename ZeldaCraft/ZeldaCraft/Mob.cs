@@ -12,99 +12,101 @@ namespace ZeldaCraft
 {
     public class Mob : Entity
     {
+        private Player PlayerToKill;
+
         private float meleeAttackCD;
-        private float meleeAttackTimer;  
+        private float meleeAttackTimer;        
 
 
-        public Mob(Vector2 initPos) : base(initPos)
+        public Mob(Vector2 initPos, Player inPlayer) : base(initPos)
         {
             Health = 5;
             Damage = 1;
             Speed = 2;
+
+            PlayerToKill = inPlayer;
 
             meleeAttackCD = 1;
             meleeAttackTimer = 0;
         }
 
 
-        public override void Update(GameTime gameTime, Player player)
+        public override void Update(GameTime gameTime)
         {
             if (meleeAttackTimer < meleeAttackCD)
                 meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            mobMovement(player);
-
             base.Update(gameTime);            
         }
-        
 
-        private void mobMovement(Player player)
-        {//problem here when colliding with a player in the x axis, sometimes the down
+
+        protected override void Movement()
+        {//problem here when colliding with a PlayerToKill in the x axis, sometimes the down
             //  or up animation sticks, and the mob keeps animating, improper dir set!?
-            if (distBetweenEntities(player) < 200)
+            if (distBetweenEntities(PlayerToKill) < 200)
             {                
-                if (Position.Y < player.Position.Y)
+                if (Position.Y < PlayerToKill.Position.Y)
                 {
                     Position.Y = Position.Y + Speed;
                     HasMoved = true;
                 }
-                if (Position.Y > player.Position.Y)
+                if (Position.Y > PlayerToKill.Position.Y)
                 {
                     Position.Y = Position.Y - Speed;
                     HasMoved = true;
                 }
 
-                bool collideWithPlayer = EntityToEntityCollision(player);   //check for mob to player collisions
+                bool collideWithPlayer = EntityToEntityCollision(PlayerToKill);   //check for mob to PlayerToKill collisions
 
                 if (Position.Y != HitBox.Y)   //check if Y actually changed values
                     EntityToLevelCollision();   //mobs rect will be updated here  
 
 
-                if (Position.X > player.Position.X)
+                if (Position.X > PlayerToKill.Position.X)
                 {
                     Position.X = Position.X - Speed;
                     HasMoved = true;
                 }
-                if (Position.X < player.Position.X)
+                if (Position.X < PlayerToKill.Position.X)
                 {
                     Position.X = Position.X + Speed;
                     HasMoved = true;
                 }
 
-                collideWithPlayer = EntityToEntityCollision(player);   //next three lines same as above, for Y
+                collideWithPlayer = EntityToEntityCollision(PlayerToKill);   //next three lines same as above, for Y
 
                 if (Position.X != HitBox.X)
                     EntityToLevelCollision();                             
 
 
-                mobDirection(player);   //set the appropriate dir for animation
+                mobDirection(PlayerToKill);   //set the appropriate dir for animation
 
                 if (collideWithPlayer == true && meleeAttackTimer >= meleeAttackCD)                
-                    meleeAttack(player);                                                
+                    meleeAttack(PlayerToKill);                                                
             }                            
         }
 
-        private void mobDirection(Player player)
+        private void mobDirection(Player PlayerToKill)
         {
-            float diffInX = Math.Abs(Position.X - player.Position.X);
-            float diffInY = Math.Abs(Position.Y - player.Position.Y);
+            float diffInX = Math.Abs(Position.X - PlayerToKill.Position.X);
+            float diffInY = Math.Abs(Position.Y - PlayerToKill.Position.Y);
 
-            if (Position.Y < player.Position.Y && diffInY > diffInX)
+            if (Position.Y < PlayerToKill.Position.Y && diffInY > diffInX)
                 Direction = "down";
-            if (Position.Y > player.Position.Y && diffInY > diffInX)
+            if (Position.Y > PlayerToKill.Position.Y && diffInY > diffInX)
                 Direction = "up"; 
 
-            if (Position.X > player.Position.X && diffInX > diffInY)            
+            if (Position.X > PlayerToKill.Position.X && diffInX > diffInY)            
                 Direction = "left";
-            if (Position.X < player.Position.X && diffInX > diffInY)
+            if (Position.X < PlayerToKill.Position.X && diffInX > diffInY)
                 Direction = "right";                        
         }
 
 
-        private void meleeAttack(Player player)
+        private void meleeAttack(Player PlayerToKill)
         {
             meleeAttackTimer = 0;
-            player.Health = player.Health - 1;
+            PlayerToKill.Health = PlayerToKill.Health - 1;
             
 
         }

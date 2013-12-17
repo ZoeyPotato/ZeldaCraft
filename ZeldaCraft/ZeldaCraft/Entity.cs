@@ -15,7 +15,7 @@ using System.Text;
 
 namespace ZeldaCraft
 {
-    public class Entity
+    public abstract class Entity
     {
         public Vector2 Position;               
         
@@ -48,15 +48,14 @@ namespace ZeldaCraft
 
         public virtual void Update(GameTime gameTime)
         {
+            Movement();
+
             if (HasMoved == true)
                 MovingAni.EntityMovementUpdate(Speed, Direction);
 
             HasMoved = false;
         }
 
-        public virtual void Update(GameTime gameTime, Player Player)
-        {
-        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -64,6 +63,14 @@ namespace ZeldaCraft
         }
 
 
+        // ----------------------------------------------------------------------------
+        // Movement interface for all entities. All entities must define how to move.
+        protected abstract void Movement();
+
+
+        // ----------------------------------------------------------------------------
+        // This method will update the animation, width, height, and hitbox of the
+        // entity to match the given spritesheet.
         public void ChangeSheet(Texture2D newSpriteSheet, int totalRowsInSheet, int largestRowLength)
         {
             MovingAni = new Animation(newSpriteSheet, totalRowsInSheet, largestRowLength);
@@ -72,8 +79,7 @@ namespace ZeldaCraft
             Width = newSpriteSheet.Width / largestRowLength;
             Height = newSpriteSheet.Height / totalRowsInSheet;
 
-            HitBox = new Rectangle((int)Position.X, (int)Position.Y,
-                                       Width, Height); 
+            HitBox = new Rectangle((int)Position.X, (int)Position.Y, Width, Height); 
         }
 
         // ----------------------------------------------------------------------------
@@ -91,8 +97,8 @@ namespace ZeldaCraft
         // If so set Position back to the old Pos (using old rect). 
         // Assuming this is the last check before finalizing an entities axis position
         // Updates the entities rect here and only here
-        public void EntityToLevelCollision()
-        {          
+        protected void EntityToLevelCollision()
+        {
             int collisionWidth = Width;
             int collisionHeight = Height;
 
@@ -120,7 +126,7 @@ namespace ZeldaCraft
         // Handles collisions for entities to entities: 
         // Makes a new rect from current Position, sees if that rect is colliding with
         //      the other entity. If so, set Position back to the old pos (using old rect) 
-        public bool EntityToEntityCollision(Entity entityToCheck)
+        protected bool EntityToEntityCollision(Entity entityToCheck)
         {
             Rectangle entityMoved = new Rectangle((int)Position.X, (int)Position.Y,
                                                   Width, Height);        

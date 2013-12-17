@@ -14,19 +14,17 @@ using System.Text;
 namespace ZeldaCraft
 {
     public class Player : Entity
-    {                  
+    {
         public Player(Vector2 initPos) : base(initPos)
-        {                        
-            Health = 10;   // setting defaults for a player
+        {
+            Health = 10;
             Damage = 1;
             Speed = 3;                 
         }
 
 
         public override void Update(GameTime gameTime)
-        {
-            playerMovement();                        
-            
+        {                     
             base.Update(gameTime);      
         }
 
@@ -34,7 +32,7 @@ namespace ZeldaCraft
         // ----------------------------------------------------------------------------
         // Handles movement for player: 
         // Moves each axis seperately and checks for collision one axis at a time.
-        private void playerMovement()
+        protected override void Movement()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
