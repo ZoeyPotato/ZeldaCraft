@@ -48,8 +48,6 @@ namespace ZeldaCraft
 
         public virtual void Update(GameTime gameTime)
         {
-            Movement();
-
             if (HasMoved == true)
                 MovingAni.EntityMovementUpdate(Speed, Direction);
 
@@ -66,6 +64,25 @@ namespace ZeldaCraft
         // ----------------------------------------------------------------------------
         // Movement interface for all entities. All entities must define how to move.
         protected abstract void Movement();
+
+
+        // ----------------------------------------------------------------------------
+        // 'Knocks' the passed entity back a few pixels, determined by the direction.
+        // defaults the distance to knock back by 20 pixels.
+        protected void Knockback(Entity entityToKnockback, string directionToKnockBack)
+        {
+            if (directionToKnockBack == "up")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 20;
+
+            if (directionToKnockBack == "down")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 20; 
+
+            if (directionToKnockBack == "left")            
+                entityToKnockback.Position.X = entityToKnockback.Position.X - 20;            
+
+            if (directionToKnockBack == "right")
+                entityToKnockback.Position.X = entityToKnockback.Position.X + 20;                                   
+        }
 
 
         // ----------------------------------------------------------------------------
@@ -92,11 +109,8 @@ namespace ZeldaCraft
 
 
         // ----------------------------------------------------------------------------
-        // Handles level collisions for entities: 
-        // Makes a new rect from current Position, sees if that rect is colliding. 
-        // If so set Position back to the old Pos (using old rect). 
-        // Assuming this is the last check before finalizing an entities axis position
-        // Updates the entities rect here and only here
+        // Handles level collisions for entities. Makes a new rect from current Position, 
+        // sees if that rect is colliding. If so set Position back to the old Pos (using old rect).
         protected void EntityToLevelCollision()
         {
             int collisionWidth = Width;
@@ -118,29 +132,27 @@ namespace ZeldaCraft
                 Position.Y = HitBox.Y;            
             }
 
-            HitBox = new Rectangle((int)Position.X, (int)Position.Y,
-                                       Width, Height); 
+            HitBox = new Rectangle((int)Position.X, (int)Position.Y, Width, Height); 
         }
 
         // ----------------------------------------------------------------------------
-        // Handles collisions for entities to entities: 
-        // Makes a new rect from current Position, sees if that rect is colliding with
-        //      the other entity. If so, set Position back to the old pos (using old rect) 
-        protected bool EntityToEntityCollision(Entity entityToCheck)
+        // Handles collisions for entities to entities. Makes a new rect from current 
+        // Position, sees if that rect is colliding with the other entity. If so, set 
+        // Position back to the old pos (using old rect) 
+        protected void EntityToEntityCollision(Entity entityToCheck)
         {
-            Rectangle entityMoved = new Rectangle((int)Position.X, (int)Position.Y,
-                                                  Width, Height);        
-        
-            if (entityMoved.Intersects(entityToCheck.HitBox) == true)
+            // build a rectangle from the current entity's pos. This rect should be
+            // overlapping the entityToCheck's current hitbox.
+            Rectangle curEntityRect = new Rectangle((int)Position.X, (int)Position.Y,
+                                                    Width, Height);
+
+            if (curEntityRect.Intersects(entityToCheck.HitBox) == true)
             {
                 Position.X = HitBox.X;   //set Pos back to old Pos
                 Position.Y = HitBox.Y;
 
-                HasMoved = false;
-                return true;
-            }
-
-            return false;
+                HasMoved = false;                
+            }            
         }
 
 

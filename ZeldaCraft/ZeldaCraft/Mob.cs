@@ -6,16 +6,18 @@ using System.Linq;
 using System.Text;
 
 //***************************************************************************
-// This class is responsible for defining what a 'mob' is. WIP
+// This class is responsible for defining what a 'mob' is. A mob or 'mobile'
+// is an artificial character that defines an enemy in the game.
 
 namespace ZeldaCraft
 {
     public class Mob : Entity
     {
         private Player PlayerToKill;
+        private int AggroDistance;        
 
         private float meleeAttackCD;
-        private float meleeAttackTimer;        
+        private float meleeAttackTimer;    
 
 
         public Mob(Vector2 initPos, Player inPlayer) : base(initPos)
@@ -25,6 +27,7 @@ namespace ZeldaCraft
             Speed = 2;
 
             PlayerToKill = inPlayer;
+            AggroDistance = 200;           
 
             meleeAttackCD = 1;
             meleeAttackTimer = 0;
@@ -33,18 +36,34 @@ namespace ZeldaCraft
 
         public override void Update(GameTime gameTime)
         {
+            Movement();
+
             if (meleeAttackTimer < meleeAttackCD)
                 meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // if we collided with the player and our attack is not on cd, then attack!
+            // else check for mob to player collision
+            if (HitBox.Intersects(PlayerToKill.HitBox) == true && meleeAttackTimer >= meleeAttackCD)
+                meleeAttack();
+            else
+                EntityToEntityCollision(PlayerToKill);
+
+            DirectionToPlayer();
 
             base.Update(gameTime);            
         }
 
 
         protected override void Movement()
-        {//problem here when colliding with a PlayerToKill in the x axis, sometimes the down
+        {
+            // if the mob is on cooldown from previously attacking, don't moving.
+            if (meleeAttackTimer < meleeAttackCD)
+                return;
+
+            //problem here when colliding with a PlayerToKill in the x axis, sometimes the down
             //  or up animation sticks, and the mob keeps animating, improper dir set!?
-            if (distBetweenEntities(PlayerToKill) < 200)
-            {                
+            if (distBetweenEntities(PlayerToKill) < AggroDistance)
+            {       
                 if (Position.Y < PlayerToKill.Position.Y)
                 {
                     Position.Y = Position.Y + Speed;
@@ -54,9 +73,7 @@ namespace ZeldaCraft
                 {
                     Position.Y = Position.Y - Speed;
                     HasMoved = true;
-                }
-
-                bool collideWithPlayer = EntityToEntityCollision(PlayerToKill);   //check for mob to PlayerToKill collisions
+                }  
 
                 if (Position.Y != HitBox.Y)   //check if Y actually changed values
                     EntityToLevelCollision();   //mobs rect will be updated here  
@@ -71,22 +88,17 @@ namespace ZeldaCraft
                 {
                     Position.X = Position.X + Speed;
                     HasMoved = true;
-                }
+                } 
 
-                collideWithPlayer = EntityToEntityCollision(PlayerToKill);   //next three lines same as above, for Y
-
-                if (Position.X != HitBox.X)
-                    EntityToLevelCollision();                             
-
-
-                mobDirection(PlayerToKill);   //set the appropriate dir for animation
-
-                if (collideWithPlayer == true && meleeAttackTimer >= meleeAttackCD)                
-                    meleeAttack(PlayerToKill);                                                
-            }                            
+                if (Position.X != HitBox.X)   //check if Y actually changed values
+                    EntityToLevelCollision();   // mobs rect will be updated here                
+            }            
         }
+        
 
-        private void mobDirection(Player PlayerToKill)
+        // ----------------------------------------------------------------------------
+        // Sets the appropriate direction for the mob to face while chasing the player.
+        private void DirectionToPlayer()
         {
             float diffInX = Math.Abs(Position.X - PlayerToKill.Position.X);
             float diffInY = Math.Abs(Position.Y - PlayerToKill.Position.Y);
@@ -94,21 +106,27 @@ namespace ZeldaCraft
             if (Position.Y < PlayerToKill.Position.Y && diffInY > diffInX)
                 Direction = "down";
             if (Position.Y > PlayerToKill.Position.Y && diffInY > diffInX)
-                Direction = "up"; 
+                Direction = "up";
 
-            if (Position.X > PlayerToKill.Position.X && diffInX > diffInY)            
+            if (Position.X > PlayerToKill.Position.X && diffInX > diffInY)
                 Direction = "left";
             if (Position.X < PlayerToKill.Position.X && diffInX > diffInY)
-                Direction = "right";                        
+                Direction = "right";
         }
 
 
-        private void meleeAttack(Player PlayerToKill)
-        {
+        // ----------------------------------------------------------------------------
+        // Performs the melee attack for the mob. Resets the timer, causes the player
+        // to take damage and knocks the player back. The knockback direction is
+        // determined by the current direction the mob is facing to the player.
+        private void meleeAttack()
+        {            
             meleeAttackTimer = 0;
             PlayerToKill.Health = PlayerToKill.Health - 1;
             
+            Knockback(PlayerToKill, Direction);
 
-        }
+            HasMoved = false;
+        }        
     }
 }

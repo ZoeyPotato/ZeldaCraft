@@ -24,7 +24,9 @@ namespace ZeldaCraft
 
 
         public override void Update(GameTime gameTime)
-        {                     
+        {
+            Movement();
+
             base.Update(gameTime);      
         }
 
@@ -61,8 +63,8 @@ namespace ZeldaCraft
             }
             
             if (Position.X != HitBox.X)   //check if x actually changed values
-                EntityToLevelCollision();         
-        }        
+                EntityToLevelCollision();
+        }
 
 
         // ----------------------------------------------------------------------------
