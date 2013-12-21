@@ -30,7 +30,7 @@ namespace ZeldaCraft
             AggroDistance = 200;           
 
             meleeAttackCD = 1;
-            meleeAttackTimer = 0;
+            meleeAttackTimer = 1;
         }
 
 
@@ -39,16 +39,7 @@ namespace ZeldaCraft
             Movement();
 
             if (meleeAttackTimer < meleeAttackCD)
-                meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            // if we collided with the player and our attack is not on cd, then attack!
-            // else check for mob to player collision
-            if (HitBox.Intersects(PlayerToKill.HitBox) == true && meleeAttackTimer >= meleeAttackCD)
-                meleeAttack();
-            else
-                EntityToEntityCollision(PlayerToKill);
-
-            DirectionToPlayer();
+                meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds;           
 
             base.Update(gameTime);            
         }
@@ -56,12 +47,11 @@ namespace ZeldaCraft
 
         protected override void Movement()
         {
-            // if the mob is on cooldown from previously attacking, don't moving.
-            if (meleeAttackTimer < meleeAttackCD)
-                return;
+            // CURRENT BUG: SOMETIMES THE ANIMATION FOR MOVING UP OR DOWN WILL CONTINUE
+            // WHEN THE MOB COLLIDES WITH THE PLAYER FROM THE UP OR DOWN. PROBABLY DUE 
+            // TO MOVING IN THE X SLIGHTLY (SINCE WE MOVE X AXIS AFTER Y AXIS) AND SETS 
+            // HASMOVED TO TRUE.
 
-            //problem here when colliding with a PlayerToKill in the x axis, sometimes the down
-            //  or up animation sticks, and the mob keeps animating, improper dir set!?
             if (distBetweenEntities(PlayerToKill) < AggroDistance)
             {       
                 if (Position.Y < PlayerToKill.Position.Y)
@@ -73,12 +63,17 @@ namespace ZeldaCraft
                 {
                     Position.Y = Position.Y - Speed;
                     HasMoved = true;
-                }  
+                }
+
+                meleeAttack();   // check for an attack before resetting pos from collision                                 
+
+                EntityToEntityCollision(PlayerToKill);
 
                 if (Position.Y != HitBox.Y)   //check if Y actually changed values
-                    EntityToLevelCollision();   //mobs rect will be updated here  
+                    EntityToLevelCollision();   //mobs box will be updated here                
 
 
+                // check here for the small bug.
                 if (Position.X > PlayerToKill.Position.X)
                 {
                     Position.X = Position.X - Speed;
@@ -88,11 +83,18 @@ namespace ZeldaCraft
                 {
                     Position.X = Position.X + Speed;
                     HasMoved = true;
-                } 
+                }
 
-                if (Position.X != HitBox.X)   //check if Y actually changed values
-                    EntityToLevelCollision();   // mobs rect will be updated here                
-            }            
+                meleeAttack();   // check for an attack before resetting pos from collision     
+
+                EntityToEntityCollision(PlayerToKill);
+
+                if (Position.X != HitBox.X)   //check if X actually changed values
+                    EntityToLevelCollision();   // mobs box will be updated here                 
+
+
+                DirectionToPlayer();
+            }
         }
         
 
@@ -120,13 +122,19 @@ namespace ZeldaCraft
         // to take damage and knocks the player back. The knockback direction is
         // determined by the current direction the mob is facing to the player.
         private void meleeAttack()
-        {            
-            meleeAttackTimer = 0;
-            PlayerToKill.Health = PlayerToKill.Health - 1;
-            
-            Knockback(PlayerToKill, Direction);
+        {
+            // build a rectangle from the latest mobs's pos.
+            Rectangle deltaBox = new Rectangle((int)Position.X, (int)Position.Y,
+                                                Width, Height);
 
-            HasMoved = false;
-        }        
+            // if we collided with the player and our attack is not on cd, then attack!
+            if (deltaBox.Intersects(PlayerToKill.HitBox) == true && meleeAttackTimer >= meleeAttackCD)
+            {
+                meleeAttackTimer = 0;
+                PlayerToKill.Health = PlayerToKill.Health - 1;
+
+                Knockback(PlayerToKill, Direction);
+            }          
+        }
     }
 }

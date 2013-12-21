@@ -68,20 +68,20 @@ namespace ZeldaCraft
 
         // ----------------------------------------------------------------------------
         // 'Knocks' the passed entity back a few pixels, determined by the direction.
-        // defaults the distance to knock back by 20 pixels.
+        // defaults the distance to knock back by 15 pixels.
         protected void Knockback(Entity entityToKnockback, string directionToKnockBack)
         {
             if (directionToKnockBack == "up")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 20;
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 15;
 
             if (directionToKnockBack == "down")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 20; 
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 15; 
 
             if (directionToKnockBack == "left")            
-                entityToKnockback.Position.X = entityToKnockback.Position.X - 20;            
+                entityToKnockback.Position.X = entityToKnockback.Position.X - 15;            
 
             if (directionToKnockBack == "right")
-                entityToKnockback.Position.X = entityToKnockback.Position.X + 20;                                   
+                entityToKnockback.Position.X = entityToKnockback.Position.X + 15;                                   
         }
 
 
@@ -96,6 +96,13 @@ namespace ZeldaCraft
             Width = newSpriteSheet.Width / largestRowLength;
             Height = newSpriteSheet.Height / totalRowsInSheet;
 
+            // if w or h are equal to tile size, decrement by one. This will
+            // allow the entity to fit into tile gaps equal to its w or h.
+            if (Width == Level.LevelMap.TileWidth)
+                Width = Width - 1;
+            if (Height == Level.LevelMap.TileHeight)
+                Height = Height - 1;
+
             HitBox = new Rectangle((int)Position.X, (int)Position.Y, Width, Height); 
         }
 
@@ -109,30 +116,20 @@ namespace ZeldaCraft
 
 
         // ----------------------------------------------------------------------------
-        // Handles level collisions for entities. Makes a new rect from current Position, 
-        // sees if that rect is colliding. If so set Position back to the old Pos (using old rect).
+        // Handles level collisions for entities. Makes a new box from current Position, 
+        // sees if that box is colliding. If so set Position back to the old Pos (using old box).
         protected void EntityToLevelCollision()
         {
-            int collisionWidth = Width;
-            int collisionHeight = Height;
+            Rectangle deltaBox = new Rectangle((int)Position.X, (int)Position.Y, 
+                                               Width, Height);
 
-            // if entity w or h are equal to tile size, decrement by one. This will
-            // allow the entity to fit into tile gaps equal to its w or h.
-            if (Width == Level.LevelMap.TileWidth)
-                collisionWidth = Width - 1;           
-            if (Height == Level.LevelMap.TileHeight)
-                collisionHeight = Height - 1;
-
-            Rectangle entityMoved = new Rectangle((int)Position.X, (int)Position.Y, 
-                                                  collisionWidth, collisionHeight);
-
-            if (Level.CollisionCheck(entityMoved) == true)
+            if (Level.CollisionCheck(deltaBox) == true)
             {
                 Position.X = HitBox.X;   //set Pos back to old Pos
-                Position.Y = HitBox.Y;            
+                Position.Y = HitBox.Y;   
             }
 
-            HitBox = new Rectangle((int)Position.X, (int)Position.Y, Width, Height); 
+            HitBox = new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
         }
 
         // ----------------------------------------------------------------------------
@@ -143,16 +140,16 @@ namespace ZeldaCraft
         {
             // build a rectangle from the current entity's pos. This rect should be
             // overlapping the entityToCheck's current hitbox.
-            Rectangle curEntityRect = new Rectangle((int)Position.X, (int)Position.Y,
-                                                    Width, Height);
+            Rectangle deltaBox = new Rectangle((int)Position.X, (int)Position.Y,
+                                               Width, Height);
 
-            if (curEntityRect.Intersects(entityToCheck.HitBox) == true)
+            if (deltaBox.Intersects(entityToCheck.HitBox) == true)
             {
                 Position.X = HitBox.X;   //set Pos back to old Pos
                 Position.Y = HitBox.Y;
 
-                HasMoved = false;                
-            }            
+                HasMoved = false;            
+            }
         }
 
 

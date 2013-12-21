@@ -44,6 +44,6 @@ namespace ZeldaCraft
             }
 
             return false;
-        }  
+        }
     }    
 }
