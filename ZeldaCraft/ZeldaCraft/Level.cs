@@ -23,7 +23,7 @@ namespace ZeldaCraft
             LevelMap = curMap;   	        
         }       
         
-            
+        
         public static void Draw(SpriteBatch spriteBatch, Rectangle camRect)
         {
             LevelMap.Draw(spriteBatch, camRect);

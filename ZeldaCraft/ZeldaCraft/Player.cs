@@ -17,17 +17,30 @@ namespace ZeldaCraft
     {
         public List<Mob> Mobs { private get; set; }
 
+        private float meleeAttackCD;
+        private float meleeAttackTimer;
+
+
         public Player(Vector2 initPos) : base(initPos)
         {
+            Speed = 3;
             Health = 10;
             Damage = 1;
-            Speed = 3;
+
+            meleeAttackCD = (float).5;
+            meleeAttackTimer = (float).5;
         }
 
 
         public override void Update(GameTime gameTime)
         {
             Movement();
+
+            if (meleeAttackTimer < meleeAttackCD)
+                meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds; 
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                meleeAttack();
 
             base.Update(gameTime);      
         }
@@ -70,6 +83,24 @@ namespace ZeldaCraft
 
             if (Position.X != HitBox.X)   //check if x actually changed values
                 EntityToLevelCollision();
+        }
+
+
+        private void meleeAttack()
+        {
+            if (meleeAttackTimer >= meleeAttackCD)
+            {
+                meleeAttackTimer = 0;
+
+                //meleeAttackAni.Draw(Direction);   will finish...
+
+                // currently do a simple iteration through all mobs
+                for (int i = 0; i < Mobs.Count; i++)
+                {
+                    Mobs[i].Health = Mobs[i].Health - 1;
+                    Knockback(Mobs[i], Direction);
+                }
+            }
         }
 
 

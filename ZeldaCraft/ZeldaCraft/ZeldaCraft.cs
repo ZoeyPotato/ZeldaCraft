@@ -65,10 +65,12 @@ namespace ZeldaCraft
             player.SetSpawn();
 
             Texture2D linkNormalSheet = Content.Load<Texture2D>("Sprites/link/linkNormalSheet");
-            player.ChangeSheet(linkNormalSheet);
+            player.ChangeCharacterSheet(linkNormalSheet);
+            Texture2D linkNormalMeleeAttack = Content.Load<Texture2D>("Sprites/link/linkNormalMeleeAttack");
+            player.ChangeMeleeAttackSheet(linkNormalMeleeAttack);
 
             Texture2D moblinSheet = Content.Load<Texture2D>("Sprites/mobs/moblin/moblinSheet");
-            mobs[0].ChangeSheet(moblinSheet);
+            mobs[0].ChangeCharacterSheet(moblinSheet);
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
         }                
@@ -120,18 +122,28 @@ namespace ZeldaCraft
             spriteBatch.DrawString(defaultFont, "PlayerPos: " + player.Position.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 20),
                                    Color.White);
-            spriteBatch.DrawString(defaultFont, "PlayerRect: " + player.HitBox.ToString(),
+            spriteBatch.DrawString(defaultFont, "PlayerBox: " + player.HitBox.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 40),
                                    Color.White);
             spriteBatch.DrawString(defaultFont, "PlayerHealth: " + player.Health.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 60),
                                    Color.White);
 
-            spriteBatch.DrawString(defaultFont, "CamPos: " + Camera.CamPos.ToString(),
+            //spriteBatch.DrawString(defaultFont, "CamPos: " + Camera.CamPos.ToString(),
+            //                       new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 90),
+            //                       Color.White);
+            //spriteBatch.DrawString(defaultFont, "CamRect: " + Camera.CamRect.ToString(),
+            //                       new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 110),
+            //                       Color.White);
+
+            spriteBatch.DrawString(defaultFont, "MobPos: " + mobs[0].Position.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 90),
                                    Color.White);
-            spriteBatch.DrawString(defaultFont, "CamRect: " + Camera.CamRect.ToString(),
+            spriteBatch.DrawString(defaultFont, "MobBox: " + mobs[0].HitBox.ToString(),
                                    new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 110),
+                                   Color.White);
+            spriteBatch.DrawString(defaultFont, "MobHealth: " + mobs[0].Health.ToString(),
+                                   new Vector2(Camera.CamPos.X + 20, Camera.CamPos.Y + 130),
                                    Color.White);
         }
 

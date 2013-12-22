@@ -18,112 +18,114 @@ namespace ZeldaCraft
 {
     public class Animation
     {
-        public Texture2D AnimationSheet { get; private set; }
-        public Dictionary<string, Rectangle[]> Animations { get; private set; }        
+        private Texture2D animationSheet;
+        private Dictionary<string, Rectangle[]> animations;
 
-        private int largestRowSize;
+        private int imagesPerRow;
         private int totalRows;
+        
         private int frameWidth;
         private int frameHeight;
-        public int CurFrame;
-
+              
         private float timeToWait;  
-        private float timeElapsed;             
+        private float timeElapsed;
+
+        private int curFrame;
         public bool IsLooping = false;
 
 
-        public Animation(Texture2D newSpriteSheet, int totalRowsInSheet, int largestRowLength)
+        public Animation(Texture2D newSpriteSheet, int totalRowsInSheet, int imagesPerRowInSheet)
         {
-            AnimationSheet = newSpriteSheet;
-            Animations = new Dictionary<string, Rectangle[]>();
+            animationSheet = newSpriteSheet;
+            animations = new Dictionary<string, Rectangle[]>();
 
-            largestRowSize = largestRowLength;
+            imagesPerRow = imagesPerRowInSheet;
             totalRows = totalRowsInSheet;
 
-            frameWidth = AnimationSheet.Width / largestRowSize;
-            frameHeight = AnimationSheet.Height / totalRows;          
+            frameWidth = animationSheet.Width / imagesPerRow;
+            frameHeight = animationSheet.Height / totalRows;
 
-            timeToWait = 1 / 10;   // default animations to .1 time per frame            
+            timeToWait = 1 / 10;   // default animations to .1 time per frame 
+            timeElapsed = 0;
+
+            curFrame = 0;
             IsLooping = true;              
         }
+
 
         // need a simple add animation function, to add an animation one at a time.
 
         // ----------------------------------------------------------------------------
-        // This function will be used to create the movement animations for entities.
-        // 
+        // This function will be used to create the 4-directional animations for entities.        
         // Builds rectangles around frames in the sprite sheet, one single row at a time.
         // Populates these row of rectangles into a dictionary for easy animation finding.
-        // 
-        // Assuming that the entity sheets first four rows are directions, with the
-        // following order: down, up, left, right.              
-        public void AddDefaultEntityAnimations()
+        // Assuming that the entity sheets first four rows correspond to directions, with 
+        // the following order: down, up, left, right.
+        public void CreateDirectionalAnimations(float timeBetweenFrames)
         {
-            timeToWait = 25;   // default entity movement to animate every 25 pixels
+            timeToWait = timeBetweenFrames;
 
             int i = 0;
             while (i < totalRows)
             {                
-                Rectangle[] AnimationRect = new Rectangle[largestRowSize];
+                Rectangle[] AnimationRect = new Rectangle[imagesPerRow];
 
                 // this loop will need some checking for when the current sheets 
-                // row has less frames than largestRowSize (otherwise we will 
-                // fill the that rows current rect array with 'blank' frames)
-                for (int j = 0; j < largestRowSize; j++)            
+                // row has less frames than imagesPerRow (otherwise we will 
+                // fill that rows rect array with 'blank' frames)
+                for (int j = 0; j < imagesPerRow; j++)            
                     AnimationRect[j] = new Rectangle(j * frameWidth, i * frameHeight,
                                                      frameWidth, frameHeight);
 
                 if (i == 0)
-                    Animations.Add("down", AnimationRect);
-
+                    animations.Add("down", AnimationRect);
                 if (i == 1)
-                    Animations.Add("up", AnimationRect);
-
+                    animations.Add("up", AnimationRect);
                 if (i == 2)
-                    Animations.Add("left", AnimationRect);
-
+                    animations.Add("left", AnimationRect);
                 if (i == 3)
-                    Animations.Add("right", AnimationRect);
+                    animations.Add("right", AnimationRect);
                 
                 i++;
-            }            
+            }
         }
 
 
-        public void Update(GameTime gameTime, String animationName)
+        public void AnimateStatic(GameTime gameTime, String animationName)
         {
             timeElapsed = timeElapsed + (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (timeElapsed >= timeToWait)
             {
-                if (CurFrame < Animations[animationName].Length)
-                    CurFrame++;
-                if (CurFrame >= Animations[animationName].Length && IsLooping == true)
-                    CurFrame = 0;
+                if (curFrame < animations[animationName].Length)
+                    curFrame++;
+                if (curFrame >= animations[animationName].Length && IsLooping == true)
+                    curFrame = 0;
 
                 timeElapsed = 0;
             }
         }
 
-        public void EntityMovementUpdate(float speed, String direction)
+        public void AnimateMovement(float speed, String direction)
         {
             timeElapsed = timeElapsed + speed;
             
             if (timeElapsed >= timeToWait)
             {
-                if (CurFrame < Animations[direction].Length)
-                    CurFrame++;
-                if (CurFrame >= Animations[direction].Length && IsLooping == true)
-                    CurFrame = 0;
+                if (curFrame < animations[direction].Length)
+                    curFrame++;
+                if (curFrame >= animations[direction].Length && IsLooping == true)
+                    curFrame = 0;
 
                 timeElapsed = 0;
             }
         }
 
+
         public void Draw(SpriteBatch spriteBatch, Vector2 curEntityPos, String direction)
         {
-            spriteBatch.Draw(AnimationSheet, curEntityPos,
-                             Animations[direction][CurFrame], Color.White);
+            spriteBatch.Draw(animationSheet, curEntityPos,
+                             animations[direction][curFrame], Color.White);
         }
 
 

@@ -22,9 +22,9 @@ namespace ZeldaCraft
 
         public Mob(Vector2 initPos, Player inPlayer) : base(initPos)
         {
+            Speed = 2;
             Health = 5;
             Damage = 1;
-            Speed = 2;
 
             playerToKill = inPlayer;
             aggroDistance = 200;           
@@ -53,15 +53,15 @@ namespace ZeldaCraft
             // HASMOVED TO TRUE.
 
             if (distBetweenEntities(playerToKill) < aggroDistance)
-            {       
-                if (Position.Y < playerToKill.Position.Y)
-                {
-                    Position.Y = Position.Y + Speed;
-                    HasMoved = true;
-                }
+            {
                 if (Position.Y > playerToKill.Position.Y)
                 {
                     Position.Y = Position.Y - Speed;
+                    HasMoved = true;
+                }
+                if (Position.Y < playerToKill.Position.Y)
+                {
+                    Position.Y = Position.Y + Speed;
                     HasMoved = true;
                 }
 
@@ -93,14 +93,14 @@ namespace ZeldaCraft
                     EntityToLevelCollision();   // mobs box will be updated here                 
 
 
-                DirectionToPlayer();
+                directionToPlayer();
             }
         }
         
 
         // ----------------------------------------------------------------------------
         // Sets the appropriate direction for the mob to face while chasing the player.
-        private void DirectionToPlayer()
+        private void directionToPlayer()
         {
             float diffInX = Math.Abs(Position.X - playerToKill.Position.X);
             float diffInY = Math.Abs(Position.Y - playerToKill.Position.Y);

@@ -8,7 +8,7 @@ using System.Text;
 //***************************************************************************
 // This class serves as a base class for all 'entities' in the game.
 // From wikipedia, an 'entity' is something that exists by itself, although it 
-//      need not be of material existence.
+// need not be of material existence.
 // So, things like a player and a mob are considered entities. 
 // This class defines attributes, characterisitics, and functionalities that all
 // entities must have.
@@ -17,20 +17,21 @@ namespace ZeldaCraft
 {
     public abstract class Entity
     {
-        public Vector2 Position;               
+        public Vector2 Position;         
         
         public int Width { get; private set; }
         public int Height { get; private set; }
         public Rectangle HitBox { get; private set; }
 
-        public Animation MovingAni { get; private set; }
-        public String Direction { get; set; }
-        public bool HasMoved { get; set; }
-
-        public int Health { get; set; }
-        public int Damage { get; set; }
-        public float Speed { get; set; }        
+        protected String Direction { get; set; }
+        protected bool HasMoved { get; set; }
+        protected float Speed { get; set; }
+        private Animation movingAni;
         
+        public int Health { get; set; }
+        protected int Damage { get; set; }
+        protected Animation meleeAttackAni { get; private set; }
+
         private String curState;
         private bool isAlive;
 
@@ -39,7 +40,8 @@ namespace ZeldaCraft
         {
             Position = initPos;
 
-            Direction = "down"; HasMoved = false;
+            Direction = "down"; 
+            HasMoved = false;
             
             curState = "default";
             isAlive = true;
@@ -49,7 +51,7 @@ namespace ZeldaCraft
         public virtual void Update(GameTime gameTime)
         {
             if (HasMoved == true)
-                MovingAni.EntityMovementUpdate(Speed, Direction);
+                movingAni.AnimateMovement(Speed, Direction);
 
             HasMoved = false;
         }
@@ -57,44 +59,33 @@ namespace ZeldaCraft
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            MovingAni.Draw(spriteBatch, Position, Direction);            
+            movingAni.Draw(spriteBatch, Position, Direction);            
         }
 
 
         // ----------------------------------------------------------------------------
         // Movement interface for all entities. All entities must define how to move.
-        protected abstract void Movement();
+        protected abstract void Movement();        
 
 
         // ----------------------------------------------------------------------------
-        // 'Knocks' the passed entity back a few pixels, determined by the direction.
-        // defaults the distance to knock back by 15 pixels.
-        protected void Knockback(Entity entityToKnockback, string directionToKnockBack)
+        // Wrapper for passing only a character texture: 
+        // Defaults totalRowsInSheet to 4, defaults imagesPerRowInSheet to 2. 
+        public void ChangeCharacterSheet(Texture2D characterSheet)
         {
-            if (directionToKnockBack == "up")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 15;
-
-            if (directionToKnockBack == "down")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 15; 
-
-            if (directionToKnockBack == "left")            
-                entityToKnockback.Position.X = entityToKnockback.Position.X - 15;            
-
-            if (directionToKnockBack == "right")
-                entityToKnockback.Position.X = entityToKnockback.Position.X + 15;                                   
+            ChangeCharacterSheet(characterSheet, 4, 2);
         }
 
-
         // ----------------------------------------------------------------------------
-        // This method will update the animation, width, height, and hitbox of the
-        // entity to match the given spritesheet.
-        public void ChangeSheet(Texture2D newSpriteSheet, int totalRowsInSheet, int largestRowLength)
+        // This method sets the moving animation, width, height, and hitbox of the 
+        // entity from the given spritesheet.
+        public void ChangeCharacterSheet(Texture2D characterSheet, int totalRowsInSheet, int imagesPerRowInSheet)
         {
-            MovingAni = new Animation(newSpriteSheet, totalRowsInSheet, largestRowLength);
-            MovingAni.AddDefaultEntityAnimations();
+            movingAni = new Animation(characterSheet, totalRowsInSheet, imagesPerRowInSheet);
+            movingAni.CreateDirectionalAnimations(25);   // default entity movement to animate every 25 pixels
 
-            Width = newSpriteSheet.Width / largestRowLength;
-            Height = newSpriteSheet.Height / totalRowsInSheet;
+            Width = characterSheet.Width / imagesPerRowInSheet;
+            Height = characterSheet.Height / totalRowsInSheet;
 
             // if w or h are equal to tile size, decrement by one. This will
             // allow the entity to fit into tile gaps equal to its w or h.
@@ -107,11 +98,19 @@ namespace ZeldaCraft
         }
 
         // ----------------------------------------------------------------------------
-        // Wrapper for passing only a texture: 
-        // Defaults totalRowsInSheet to '4', defaults largestRowLength to 2. 
-        public void ChangeSheet(Texture2D newSpriteSheet)
+        // Wrapper for passing only a melee attack texture: 
+        // Defaults totalRowsInSheet to 4, defaults imagesPerRowInSheet to 1. 
+        public void ChangeMeleeAttackSheet(Texture2D meleeAttackSheet)
         {
-            ChangeSheet(newSpriteSheet, 4, 2);
+            ChangeMeleeAttackSheet(meleeAttackSheet, 4, 1);
+        }
+
+        // ----------------------------------------------------------------------------
+        // This method sets the attack animation of the entity from the given spritesheet.
+        public void ChangeMeleeAttackSheet(Texture2D meleeAttackSheet, int totalRowsInSheet, int imagesPerRowInSheet)
+        {
+            meleeAttackAni = new Animation(meleeAttackSheet, totalRowsInSheet, imagesPerRowInSheet);
+            meleeAttackAni.CreateDirectionalAnimations(0);
         }
 
 
@@ -157,7 +156,7 @@ namespace ZeldaCraft
 
         // ----------------------------------------------------------------------------
         // Returns the distance between the entity and passed entity.        
-        public double distBetweenEntities(Entity passedEntity)
+        protected double distBetweenEntities(Entity passedEntity)
         {
             double distance;
 
@@ -165,6 +164,24 @@ namespace ZeldaCraft
                 Math.Pow((passedEntity.Position.Y - Position.Y), 2));
 
             return distance;
+        }
+
+        // ----------------------------------------------------------------------------
+        // 'Knocks' the passed entity back a few pixels, determined by the direction.
+        // defaults the distance to knock back by 15 pixels.
+        protected void Knockback(Entity entityToKnockback, string directionToKnockBack)
+        {
+            if (directionToKnockBack == "up")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 15;
+
+            if (directionToKnockBack == "down")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 15;
+
+            if (directionToKnockBack == "left")
+                entityToKnockback.Position.X = entityToKnockback.Position.X - 15;
+
+            if (directionToKnockBack == "right")
+                entityToKnockback.Position.X = entityToKnockback.Position.X + 15;
         }
 
         #endregion
