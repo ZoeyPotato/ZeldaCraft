@@ -15,11 +15,13 @@ namespace ZeldaCraft
 {
     public class Player : Entity
     {
+        public List<Mob> Mobs { private get; set; }
+
         public Player(Vector2 initPos) : base(initPos)
         {
             Health = 10;
             Damage = 1;
-            Speed = 3;                 
+            Speed = 3;
         }
 
 
@@ -45,7 +47,9 @@ namespace ZeldaCraft
             {
                 Position.Y = Position.Y - Speed;
                 Direction = "up"; HasMoved = true;
-            }           
+            }
+
+            EntityToEntityCollision(Mobs[0]);
 
             if (Position.Y != HitBox.Y)   //check if y actually changed values
                 EntityToLevelCollision();
@@ -61,7 +65,9 @@ namespace ZeldaCraft
                 Position.X = Position.X + Speed;
                 Direction = "right"; HasMoved = true;
             }
-            
+
+            EntityToEntityCollision(Mobs[0]);
+
             if (Position.X != HitBox.X)   //check if x actually changed values
                 EntityToLevelCollision();
         }

@@ -25,7 +25,7 @@ namespace ZeldaCraft
         private int totalRows;
         private int frameWidth;
         private int frameHeight;
-        public int curFrame;
+        public int CurFrame;
 
         private float timeToWait;  
         private float timeElapsed;             
@@ -96,10 +96,10 @@ namespace ZeldaCraft
 
             if (timeElapsed >= timeToWait)
             {
-                if (curFrame < Animations[animationName].Length)
-                    curFrame++;
-                if (curFrame >= Animations[animationName].Length && IsLooping == true)
-                    curFrame = 0;
+                if (CurFrame < Animations[animationName].Length)
+                    CurFrame++;
+                if (CurFrame >= Animations[animationName].Length && IsLooping == true)
+                    CurFrame = 0;
 
                 timeElapsed = 0;
             }
@@ -111,10 +111,10 @@ namespace ZeldaCraft
             
             if (timeElapsed >= timeToWait)
             {
-                if (curFrame < Animations[direction].Length)
-                    curFrame++;
-                if (curFrame >= Animations[direction].Length && IsLooping == true)
-                    curFrame = 0;
+                if (CurFrame < Animations[direction].Length)
+                    CurFrame++;
+                if (CurFrame >= Animations[direction].Length && IsLooping == true)
+                    CurFrame = 0;
 
                 timeElapsed = 0;
             }
@@ -123,7 +123,7 @@ namespace ZeldaCraft
         public void Draw(SpriteBatch spriteBatch, Vector2 curEntityPos, String direction)
         {
             spriteBatch.Draw(AnimationSheet, curEntityPos,
-                             Animations[direction][curFrame], Color.White);
+                             Animations[direction][CurFrame], Color.White);
         }
 
 

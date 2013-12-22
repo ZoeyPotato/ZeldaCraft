@@ -31,8 +31,8 @@ namespace ZeldaCraft
         public int Damage { get; set; }
         public float Speed { get; set; }        
         
-        private String CurState;
-        private bool IsAlive;
+        private String curState;
+        private bool isAlive;
 
 
         public Entity(Vector2 initPos)
@@ -41,8 +41,8 @@ namespace ZeldaCraft
 
             Direction = "down"; HasMoved = false;
             
-            CurState = "default";
-            IsAlive = true;
+            curState = "default";
+            isAlive = true;
         }
 
 

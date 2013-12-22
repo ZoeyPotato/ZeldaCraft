@@ -12,6 +12,8 @@ using System.Text;
 // There could be more work done here to add features like zooming, distortion, 
 // and whatever.
 
+// Should probably be a singleton and not static.
+
 namespace ZeldaCraft
 {
     static class Camera
@@ -19,8 +21,8 @@ namespace ZeldaCraft
         public static Vector2 CamPos;   
         public static Rectangle CamRect { get; private set; }
           
-        private static bool UpdateMatrix;                                     
-        private static Matrix Translation = Matrix.Identity;
+        private static bool updateMatrix;                                     
+        private static Matrix translation = Matrix.Identity;
 
 
         public static void Initialize(Player player, Rectangle mapView)
@@ -37,7 +39,7 @@ namespace ZeldaCraft
             CamRect = new Rectangle((int)adjustedX, (int)adjustedY,
                                     mapView.Width, mapView.Height);
             
-            UpdateMatrix = false;        
+            updateMatrix = false;        
         }
 
 
@@ -53,7 +55,7 @@ namespace ZeldaCraft
             
             if ((CamPos.X != CamRect.X) || (CamPos.Y != CamRect.Y))   // if the camera moved
             {
-                UpdateMatrix = true;
+                updateMatrix = true;
                 
                 int newRectX = (int)CamPos.X;
                 int newRectY = (int)CamPos.Y;                                             
@@ -65,12 +67,12 @@ namespace ZeldaCraft
         
         public static Matrix TranslateMatrix()
         {
-            if (UpdateMatrix == true)
-                Translation = Matrix.CreateTranslation(new Vector3(-CamPos, 0));
+            if (updateMatrix == true)
+                translation = Matrix.CreateTranslation(new Vector3(-CamPos, 0));
 
-            UpdateMatrix = false;
+            updateMatrix = false;
 
-            return Translation;
+            return translation;
         }
     }
 }

@@ -18,16 +18,14 @@ namespace ZeldaCraft
     public class ZeldaCraft : Game
     {
         private GraphicsDeviceManager graphics;
-        private float frameRate;
         private SpriteBatch spriteBatch;
+        private Rectangle mapView;
+        private float frameRate;
+        
+        private SpriteFont defaultFont;
 
         private Player player;
-        private Mob mob;
-        //public List<Mob> MobList { get; set; }   need a data struct of mobs
-
-        private Rectangle mapView;
-
-        private SpriteFont defaultFont;
+        private List<Mob> mobs;
 
 
         public ZeldaCraft() : base()
@@ -42,10 +40,16 @@ namespace ZeldaCraft
         protected override void Initialize()
         {          
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            mapView = graphics.GraphicsDevice.Viewport.Bounds;            
-            
+            mapView = graphics.GraphicsDevice.Viewport.Bounds;
+
             player = new Player(new Vector2(640, 360));
-            mob = new Mob(new Vector2(2100, 2100), player);
+
+            // creating mobs will be an algorithm later, instead single instance
+            Mob mob = new Mob(new Vector2(2100, 2100), player);
+            mobs = new List<Mob>();
+            mobs.Add(mob);
+
+            player.Mobs = mobs;
 
             Camera.Initialize(player, mapView);
 
@@ -64,7 +68,7 @@ namespace ZeldaCraft
             player.ChangeSheet(linkNormalSheet);
 
             Texture2D moblinSheet = Content.Load<Texture2D>("Sprites/mobs/moblin/moblinSheet");
-            mob.ChangeSheet(moblinSheet);                        
+            mobs[0].ChangeSheet(moblinSheet);
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
         }                
@@ -76,7 +80,7 @@ namespace ZeldaCraft
                 Exit();
 
             player.Update(gameTime);
-            mob.Update(gameTime);
+            mobs[0].Update(gameTime);
 
             Camera.Update(player);                                  
 
@@ -95,7 +99,7 @@ namespace ZeldaCraft
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                               null, null, null, null, Camera.TranslateMatrix());            
             player.Draw(spriteBatch);
-            mob.Draw(spriteBatch);
+            mobs[0].Draw(spriteBatch);
             DrawText();   // for debugging
             spriteBatch.End();
 
