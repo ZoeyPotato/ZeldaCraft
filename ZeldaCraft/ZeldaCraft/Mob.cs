@@ -118,9 +118,10 @@ namespace ZeldaCraft
 
 
         // ----------------------------------------------------------------------------
-        // Performs the melee attack for the mob. Resets the timer, causes the player
-        // to take damage and knocks the player back. The knockback direction is
-        // determined by the current direction the mob is facing to the player.
+        // Checks for a melee attack for the mob. An attack occurs if the mob overlaps
+        // with the playerToKill. Resets the attack timer, causes the player to take 
+        // damage and knocks the player back. The knockback direction is determined by 
+        // the current direction the mob is facing to the player.
         private void meleeAttack()
         {
             // build a rectangle from the latest mobs's pos.

@@ -109,6 +109,11 @@ namespace ZeldaCraft
         }
 
 
+        // ----------------------------------------------------------------------------
+        // Performs the melee attack for the player. If space is pressed and the attack
+        // is not on cd, then a check occurs for every mob to see if a mob is in range
+        // for the attack. If so, the mob takes damage and is knockbacked the direction
+        // the player is facing/attacked.
         private void meleeAttack()
         {
             // this check will stop drawing the attack if it is over its time to draw
@@ -136,6 +141,9 @@ namespace ZeldaCraft
             }
         }
 
+        // ----------------------------------------------------------------------------
+        // Helper method for meleeAttack, creates the appropriate attack box for hit
+        // detection based on the direction attacked.
         private Rectangle createMeleeAttackBox(String curDirection)
         {
             Rectangle attackBox;

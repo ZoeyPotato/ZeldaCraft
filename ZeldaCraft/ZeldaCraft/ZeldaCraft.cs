@@ -95,11 +95,11 @@ namespace ZeldaCraft
             frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             spriteBatch.Begin();
-            Level.Draw(spriteBatch, Camera.CamRect);                                
+            Level.Draw(spriteBatch, Camera.CamRect);
             spriteBatch.End();
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                              null, null, null, null, Camera.TranslateMatrix());            
+                              null, null, null, null, Camera.TranslateMatrix());                                
             player.Draw(spriteBatch);
             mobs[0].Draw(spriteBatch);
             DrawText();   // for debugging

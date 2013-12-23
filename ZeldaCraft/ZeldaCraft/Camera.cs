@@ -18,11 +18,12 @@ namespace ZeldaCraft
 {
     static class Camera
     {
-        public static Vector2 CamPos;   
+        public static Vector2 CamPos;
         public static Rectangle CamRect { get; private set; }
-          
-        private static bool updateMatrix;                                     
+                                                  
         private static Matrix translation = Matrix.Identity;
+        private static float zoom;
+        private static bool updateMatrix;
 
 
         public static void Initialize(Player player, Rectangle mapView)
@@ -38,7 +39,9 @@ namespace ZeldaCraft
             CamPos = new Vector2(adjustedX, adjustedY);            
             CamRect = new Rectangle((int)adjustedX, (int)adjustedY,
                                     mapView.Width, mapView.Height);
-            
+
+            zoom = (float)1;
+
             updateMatrix = false;        
         }
 
@@ -68,7 +71,8 @@ namespace ZeldaCraft
         public static Matrix TranslateMatrix()
         {
             if (updateMatrix == true)
-                translation = Matrix.CreateTranslation(new Vector3(-CamPos, 0));
+                translation = Matrix.CreateTranslation(new Vector3(-CamPos.X, -CamPos.Y, 0)) *
+                              Matrix.CreateScale(new Vector3(zoom, zoom, 1));
 
             updateMatrix = false;
 
