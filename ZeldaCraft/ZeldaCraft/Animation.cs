@@ -18,7 +18,7 @@ namespace ZeldaCraft
 {
     public class Animation
     {
-        private Texture2D animationSheet;
+        private Texture2D spriteSheet;
         private Dictionary<string, Rectangle[]> animations;
 
         private int imagesPerRow;
@@ -36,14 +36,14 @@ namespace ZeldaCraft
 
         public Animation(Texture2D newSpriteSheet, int totalRowsInSheet, int imagesPerRowInSheet)
         {
-            animationSheet = newSpriteSheet;
+            spriteSheet = newSpriteSheet;
             animations = new Dictionary<string, Rectangle[]>();
 
             imagesPerRow = imagesPerRowInSheet;
             totalRows = totalRowsInSheet;
 
-            frameWidth = animationSheet.Width / imagesPerRow;
-            frameHeight = animationSheet.Height / totalRows;
+            frameWidth = spriteSheet.Width / imagesPerRow;
+            frameHeight = spriteSheet.Height / totalRows;
 
             timeToWait = 1 / 10;   // default animations to .1 time per frame 
             timeElapsed = 0;
@@ -70,13 +70,12 @@ namespace ZeldaCraft
             {                
                 Rectangle[] AnimationRect = new Rectangle[imagesPerRow];
 
-                // this loop will need some checking for when the current sheets 
-                // row has less frames than imagesPerRow (otherwise we will 
-                // fill that rows rect array with 'blank' frames)
-                for (int j = 0; j < imagesPerRow; j++)            
+                // this loop will need checking for when the current row has less frames than 
+                // expected imagesPerRow. Otherwise that rows rect array will have empty frames.
+                for (int j = 0; j < imagesPerRow; j++)
                     AnimationRect[j] = new Rectangle(j * frameWidth, i * frameHeight,
-                                                     frameWidth, frameHeight);
-
+                                                     frameWidth, frameHeight);                
+                
                 if (i == 0)
                     animations.Add("down", AnimationRect);
                 if (i == 1)
@@ -122,11 +121,11 @@ namespace ZeldaCraft
         }
 
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 curEntityPos, String direction)
+        public void DrawAnimation(SpriteBatch spriteBatch, Vector2 curEntityPos, String direction)
         {
-            spriteBatch.Draw(animationSheet, curEntityPos,
+            spriteBatch.Draw(spriteSheet, curEntityPos,
                              animations[direction][curFrame], Color.White);
-        }
+        }       
 
 
         public void ChangeAnimationFPS(int newAnimationFPS)

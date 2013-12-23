@@ -22,7 +22,7 @@ namespace ZeldaCraft
 
         public Mob(Vector2 initPos, Player inPlayer) : base(initPos)
         {
-            Speed = 2;
+            Speed = (float)1.5;
             Health = 5;
             Damage = 1;
 
@@ -125,7 +125,7 @@ namespace ZeldaCraft
         {
             // build a rectangle from the latest mobs's pos.
             Rectangle deltaBox = new Rectangle((int)Position.X, (int)Position.Y,
-                                                Width, Height);
+                                               Width, Height);
 
             // if we collided with the player and our attack is not on cd, then attack!
             if (deltaBox.Intersects(playerToKill.HitBox) == true && meleeAttackTimer >= meleeAttackCD)
@@ -133,8 +133,8 @@ namespace ZeldaCraft
                 meleeAttackTimer = 0;
                 playerToKill.Health = playerToKill.Health - 1;
 
-                Knockback(playerToKill, Direction);
-            }          
+                Knockback(playerToKill, Direction, 20);
+            }
         }
     }
 }

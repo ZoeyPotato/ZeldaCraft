@@ -26,13 +26,15 @@ namespace ZeldaCraft
         protected String Direction { get; set; }
         protected bool HasMoved { get; set; }
         protected float Speed { get; set; }
-        private Animation movingAni;
+        protected Animation movingAni;
         
         public int Health { get; set; }
         protected int Damage { get; set; }
-        protected Animation meleeAttackAni { get; private set; }
+       
+        protected int meleeAttackRange { get; set; }
+        protected Animation meleeAttackAni;
 
-        private String curState;
+        protected String CurState;
         private bool isAlive;
 
 
@@ -41,9 +43,9 @@ namespace ZeldaCraft
             Position = initPos;
 
             Direction = "down"; 
-            HasMoved = false;
-            
-            curState = "default";
+            HasMoved = false;            
+
+            CurState = "default";
             isAlive = true;
         }
 
@@ -53,13 +55,13 @@ namespace ZeldaCraft
             if (HasMoved == true)
                 movingAni.AnimateMovement(Speed, Direction);
 
-            HasMoved = false;
+            HasMoved = false;   // reset back to false for next update
         }
 
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
-            movingAni.Draw(spriteBatch, Position, Direction);            
+            movingAni.DrawAnimation(spriteBatch, Position, Direction);            
         }
 
 
@@ -107,10 +109,16 @@ namespace ZeldaCraft
 
         // ----------------------------------------------------------------------------
         // This method sets the attack animation of the entity from the given spritesheet.
+        // Changes the meleeAttackRange based on the difference in sprite widths.
         public void ChangeMeleeAttackSheet(Texture2D meleeAttackSheet, int totalRowsInSheet, int imagesPerRowInSheet)
         {
             meleeAttackAni = new Animation(meleeAttackSheet, totalRowsInSheet, imagesPerRowInSheet);
             meleeAttackAni.CreateDirectionalAnimations(0);
+
+            // use the width of the a sprite in this sheet to calculate attack range
+            // using width because these sprites should be squares, so w or h works
+            int widthOfSprite = meleeAttackSheet.Width / imagesPerRowInSheet;
+            meleeAttackRange = widthOfSprite - Width;
         }
 
 
@@ -169,19 +177,19 @@ namespace ZeldaCraft
         // ----------------------------------------------------------------------------
         // 'Knocks' the passed entity back a few pixels, determined by the direction.
         // defaults the distance to knock back by 15 pixels.
-        protected void Knockback(Entity entityToKnockback, string directionToKnockBack)
+        protected void Knockback(Entity entityToKnockback, string direction, int distance)
         {
-            if (directionToKnockBack == "up")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y - 15;
+            if (direction == "up")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y - distance;
 
-            if (directionToKnockBack == "down")
-                entityToKnockback.Position.Y = entityToKnockback.Position.Y + 15;
+            if (direction == "down")
+                entityToKnockback.Position.Y = entityToKnockback.Position.Y + distance;
 
-            if (directionToKnockBack == "left")
-                entityToKnockback.Position.X = entityToKnockback.Position.X - 15;
+            if (direction == "left")
+                entityToKnockback.Position.X = entityToKnockback.Position.X - distance;
 
-            if (directionToKnockBack == "right")
-                entityToKnockback.Position.X = entityToKnockback.Position.X + 15;
+            if (direction == "right")
+                entityToKnockback.Position.X = entityToKnockback.Position.X + distance;
         }
 
         #endregion

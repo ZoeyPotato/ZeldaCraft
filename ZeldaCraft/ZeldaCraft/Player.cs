@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 
 //***************************************************************************
-// This class is responsible for defining what a 'player' is. A player has 
-// attributes such as, health, damage, speed, etc. WIP
+// This class is responsible for defining what a 'player' is. A player is an 
+// entity controlled by a game player. The player controls a sprite through
+// keyboard inputs. Any functionalities relating to the notion of 'player'
+// are found here. This includes things like attacking, moving, etc. 
 
 namespace ZeldaCraft
 {
@@ -19,6 +21,7 @@ namespace ZeldaCraft
 
         private float meleeAttackCD;
         private float meleeAttackTimer;
+        private float durationToDrawAttack;
 
 
         public Player(Vector2 initPos) : base(initPos)
@@ -27,8 +30,9 @@ namespace ZeldaCraft
             Health = 10;
             Damage = 1;
 
-            meleeAttackCD = (float).5;
-            meleeAttackTimer = (float).5;
+            meleeAttackCD = (float).3;
+            meleeAttackTimer = (float).3;
+            durationToDrawAttack = (float).15;
         }
 
 
@@ -37,12 +41,31 @@ namespace ZeldaCraft
             Movement();
 
             if (meleeAttackTimer < meleeAttackCD)
-                meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds; 
+                meleeAttackTimer = meleeAttackTimer + (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                meleeAttack();
+            meleeAttack();            
 
             base.Update(gameTime);      
+        }
+
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (CurState == "meleeAttack")
+            {
+                Vector2 adjustedAttackPos = Position;
+
+                // these checks will adjust the up and left pos to draw the 
+                // attack animation at the correct pos
+                if (Direction == "up")
+                    adjustedAttackPos.Y = Position.Y - meleeAttackRange;
+                if (Direction == "left")
+                    adjustedAttackPos.X = Position.X - meleeAttackRange;
+
+                meleeAttackAni.DrawAnimation(spriteBatch, adjustedAttackPos, Direction);
+            }
+            else
+                base.Draw(spriteBatch);
         }
 
 
@@ -88,19 +111,65 @@ namespace ZeldaCraft
 
         private void meleeAttack()
         {
-            if (meleeAttackTimer >= meleeAttackCD)
+            // this check will stop drawing the attack if it is over its time to draw
+            if (meleeAttackTimer >= durationToDrawAttack)
+                CurState = "default";
+
+            // if space is pressed and the meleeattack is not on cd, then attack!
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && meleeAttackTimer >= meleeAttackCD)
             {
                 meleeAttackTimer = 0;
+                CurState = "meleeAttack";
 
-                //meleeAttackAni.Draw(Direction);   will finish...
+                Rectangle meleeAttackBox = createMeleeAttackBox(Direction);
 
                 // currently do a simple iteration through all mobs
+                // this should later only check mobs in a close vincinity.
                 for (int i = 0; i < Mobs.Count; i++)
                 {
-                    Mobs[i].Health = Mobs[i].Health - 1;
-                    Knockback(Mobs[i], Direction);
+                    if (meleeAttackBox.Intersects(Mobs[i].HitBox) == true)
+                    {
+                        Mobs[i].Health = Mobs[i].Health - 1;
+                        Knockback(Mobs[i], Direction, 15);
+                    }     
                 }
             }
+        }
+
+        private Rectangle createMeleeAttackBox(String curDirection)
+        {
+            Rectangle attackBox;
+
+            if (curDirection == "up")
+            {
+                attackBox = new Rectangle((int)Position.X, (int)Position.Y - meleeAttackRange,
+                                          Width, meleeAttackRange);
+
+                return attackBox;
+            }
+            if (curDirection == "down")
+            {
+                attackBox = new Rectangle((int)Position.X, (int)Position.Y + Height,
+                                          Width, meleeAttackRange);
+
+                return attackBox;
+            }
+            if (curDirection == "left")
+            {
+                attackBox = new Rectangle((int)Position.X - meleeAttackRange, (int)Position.Y,
+                                          meleeAttackRange, Height);
+
+                return attackBox;
+            }
+            if (curDirection == "right")
+            {
+                attackBox = new Rectangle((int)Position.X + Width, (int)Position.Y,
+                                          meleeAttackRange, Height);
+
+                return attackBox;
+            }
+
+            return attackBox = new Rectangle();
         }
 
 
