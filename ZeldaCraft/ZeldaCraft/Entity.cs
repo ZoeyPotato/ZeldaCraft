@@ -34,7 +34,7 @@ namespace ZeldaCraft
         protected int meleeAttackRange { get; set; }
         protected Animation meleeAttackAni;
 
-        protected String CurState;
+        protected String CombatState;
         private bool isAlive;
 
 
@@ -45,7 +45,7 @@ namespace ZeldaCraft
             Direction = "down"; 
             HasMoved = false;            
 
-            CurState = "default";
+            CombatState = "default";
             isAlive = true;
         }
 
@@ -115,10 +115,10 @@ namespace ZeldaCraft
             meleeAttackAni = new Animation(meleeAttackSheet, totalRowsInSheet, imagesPerRowInSheet);
             meleeAttackAni.CreateDirectionalAnimations(0);
 
-            // use the width of the a sprite in this sheet to calculate attack range
-            // using width because these sprites should be squares, so w or h works
-            int widthOfSprite = meleeAttackSheet.Width / imagesPerRowInSheet;
-            meleeAttackRange = widthOfSprite - Width;
+            // use the height of a sprite in this attack sheet to calculate attack range
+            // should be able to use w or h, since attack sprites should be squares.
+            int heightOfSprite = meleeAttackSheet.Height / totalRowsInSheet;
+            meleeAttackRange = heightOfSprite - Height;
         }
 
 

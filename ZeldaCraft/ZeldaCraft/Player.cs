@@ -51,7 +51,7 @@ namespace ZeldaCraft
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (CurState == "meleeAttack")
+            if (CombatState == "meleeAttack")
             {
                 Vector2 adjustedAttackPos = Position;
 
@@ -118,13 +118,13 @@ namespace ZeldaCraft
         {
             // this check will stop drawing the attack if it is over its time to draw
             if (meleeAttackTimer >= durationToDrawAttack)
-                CurState = "default";
+                CombatState = "default";
 
             // if space is pressed and the meleeattack is not on cd, then attack!
             if (Keyboard.GetState().IsKeyDown(Keys.Space) && meleeAttackTimer >= meleeAttackCD)
             {
                 meleeAttackTimer = 0;
-                CurState = "meleeAttack";
+                CombatState = "meleeAttack";
 
                 Rectangle meleeAttackBox = createMeleeAttackBox(Direction);
 
@@ -136,8 +136,12 @@ namespace ZeldaCraft
                     {
                         Mobs[i].Health = Mobs[i].Health - 1;
                         Knockback(Mobs[i], Direction, 15);
-                    }     
+
+                        Sound.MobHurt.Play();
+                    }    
                 }
+
+                Sound.NormalSwordAttack.Play();
             }
         }
 

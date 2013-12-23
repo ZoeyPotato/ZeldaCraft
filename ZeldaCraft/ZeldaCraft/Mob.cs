@@ -132,9 +132,11 @@ namespace ZeldaCraft
             if (deltaBox.Intersects(playerToKill.HitBox) == true && meleeAttackTimer >= meleeAttackCD)
             {
                 meleeAttackTimer = 0;
-                playerToKill.Health = playerToKill.Health - 1;
 
+                playerToKill.Health = playerToKill.Health - 1;
                 Knockback(playerToKill, Direction, 20);
+
+                Sound.PlayerHurt.Play();
             }
         }
     }

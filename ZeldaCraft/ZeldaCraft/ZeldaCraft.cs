@@ -64,16 +64,18 @@ namespace ZeldaCraft
             Level.SetLevel(defaultMap);
             player.SetSpawn();
 
+            Sound.LoadSounds(Content);
+
             Texture2D linkNormalSheet = Content.Load<Texture2D>("Sprites/link/linkNormalSheet");
             player.ChangeCharacterSheet(linkNormalSheet);
             Texture2D linkNormalMeleeAttack = Content.Load<Texture2D>("Sprites/link/linkNormalMeleeAttack");
-            player.ChangeMeleeAttackSheet(linkNormalMeleeAttack);
+            player.ChangeMeleeAttackSheet(linkNormalMeleeAttack);            
 
             Texture2D moblinSheet = Content.Load<Texture2D>("Sprites/mobs/moblin/moblinSheet");
             mobs[0].ChangeCharacterSheet(moblinSheet);
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
-        }                
+        }   
 
         
         protected override void Update(GameTime gameTime)

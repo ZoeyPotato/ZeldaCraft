@@ -15,13 +15,13 @@ namespace ZeldaCraft
 {
     static class Level
     {
-        public static Map LevelMap { get; set; }             
+        public static Map LevelMap { get; private set; }             
 
         
 	    public static void SetLevel(Map curMap)
 	    {
-            LevelMap = curMap;   	        
-        }       
+            LevelMap = curMap;       
+        }
         
         
         public static void Draw(SpriteBatch spriteBatch, Rectangle camRect)
